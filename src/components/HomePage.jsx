@@ -5,31 +5,69 @@ const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const heroSlides = [
-    {
-      title: "Perfect Gifts for Every Heart",
-      subtitle: "Discover meaningful presents that create lasting memories",
-      image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=600&fit=crop"
-    },
+ {
+  title: "Perfect Gifts for Every Heart",
+  subtitle: "Discover meaningful presents that create lasting memories",
+  image: "https://i.pinimg.com/736x/68/59/9f/68599fba35b6223b2a8290ac41b33ce9.jpg"
+},
+
     {
       title: "Celebrate Every Moment",
       subtitle: "From birthdays to anniversaries, find the perfect expression of love",
       image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800&h=600&fit=crop"
     },
-    {
-      title: "Curated with Love",
-      subtitle: "Hand-selected gifts that speak from the heart",
-      image: "https://images.unsplash.com/photo-1607344645866-009c7d0951dd?w=800&h=600&fit=crop"
-    }
+   {
+  title: "Curated with Love",
+  subtitle: "Hand-selected gifts that speak from the heart",
+  image: "https://i.pinimg.com/736x/06/4c/0c/064c0c9dc9a7229f097e799f83dcc2a2.jpg"
+}
+
   ];
 
-  const categories = [
-    { name: "Birthday Gifts", icon: "🎂", color: "#ff6b9d" },
-    { name: "Anniversary", icon: "💝", color: "#d47fa6" },
-    { name: "Valentine's Day", icon: "💕", color: "#ff8fab" },
-    { name: "Mother's Day", icon: "🌸", color: "#f4a6cd" },
-    { name: "Wedding Gifts", icon: "💒", color: "#c94f7c" },
-    { name: "Baby Shower", icon: "👶", color: "#fbb1bd" }
-  ];
+ const categories = [
+  {
+    id: 1,
+    name: "Birthday Gifts",
+    icon: "🎂",
+    color: "#ff6b9d",
+    description: "Celebrate another year with joyful surprises"
+  },
+  {
+    id: 2,
+    name: "Anniversary",
+    icon: "💝",
+    color: "#d47fa6",
+    description: "Gifts that honor timeless love"
+  },
+  {
+    id: 3,
+    name: "Valentine's Day",
+    icon: "💕",
+    color: "#ff8fab",
+    description: "Express your heart with romantic gestures"
+  },
+  {
+    id: 4,
+    name: "Mother's Day",
+    icon: "🌸",
+    color: "#f4a6cd",
+    description: "Appreciation for the women who raised us"
+  },
+  {
+    id: 5,
+    name: "Wedding Gifts",
+    icon: "💒",
+    color: "#c94f7c",
+    description: "Elegant tokens for the perfect couple"
+  },
+  {
+    id: 6,
+    name: "Baby Shower",
+    icon: "👶",
+    color: "#fbb1bd",
+    description: "Adorable gifts for growing families"
+  }
+];
 
   const featuredProducts = [
     {
@@ -47,19 +85,21 @@ const HomePage = () => {
       rating: 4.9
     },
     {
-      id: 3,
-      name: "Artisan Candle Set",
-      price: "$45.99",
-      image: "https://images.unsplash.com/photo-1602874801006-22c8862c5f18?w=300&h=300&fit=crop",
-      rating: 4.7
-    },
+  id: 3,
+  name: "Artisan Candle Set",
+  price: "$45.99",
+  image: "https://i.pinimg.com/736x/72/12/64/72126429b92657d394b54d73974a859d.jpg",
+  rating: 4.7
+},
+
     {
-      id: 4,
-      name: "Custom Coffee Mug",
-      price: "$19.99",
-      image: "https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?w=300&h=300&fit=crop",
-      rating: 4.6
-    }
+  id: 4,
+  name: "Custom Coffee Mug",
+  price: "$19.99",
+  image: "https://i.pinimg.com/736x/fa/29/20/fa292073229fdf4b2d48cb93b34a6438.jpg",
+  rating: 4.6
+}
+
   ];
 
   useEffect(() => {
@@ -220,7 +260,7 @@ const HomePage = () => {
           left: 0;
           width: 100%;
           height: 100%;
-          background: linear-gradient(45deg, rgba(196, 79, 124, 0.8), rgba(212, 127, 166, 0.6));
+          
         }
 
         .hero-content {
