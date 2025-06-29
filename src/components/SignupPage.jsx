@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const SignupPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -9,14 +12,29 @@ const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { signup } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
-    console.log('Signup:', { firstName, lastName, email, password, agreeToTerms });
+
+    if (!agreeToTerms) {
+      toast.error('Please agree to the terms and conditions');
+      return;
+    }
+
+    setLoading(true);
+    const result = await signup({ firstName, lastName, email, password });
+    if (result.success) {
+      navigate('/');
+    }
+    setLoading(false);
   };
 
   return (
@@ -169,7 +187,7 @@ const SignupPage = () => {
           margin-bottom: 16px;
         }
 
-        .signup-button:hover {
+        .signup-button:hover:not(:disabled) {
           background: linear-gradient(to right, #c86a99, #a64a78);
         }
 
@@ -196,7 +214,7 @@ const SignupPage = () => {
 
         .signup-image {
           flex: 1;
-          background: url('/gift.jpg') no-repeat center center;
+          background: url('/download.jpeg') no-repeat center center;
           background-size: cover;
         }
 
@@ -222,7 +240,7 @@ const SignupPage = () => {
           <div className="signup-form-container">
             <div className="signup-brand">HEART & HUES</div>
             <h2 className="signup-heading">Create Account</h2>
-            <p className="signup-subtext">Join us and discover perfect gifts for every moment ✨</p>
+            <p className="signup-subtext">Join us and discover perfect gifts 🎁</p>
 
             <div className="google-signup">
               <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google" />
@@ -231,7 +249,7 @@ const SignupPage = () => {
 
             <div className="divider">OR</div>
 
-            <div>
+            <form onSubmit={handleSubmit}>
               <div className="name-row">
                 <div className="input-group">
                   <label className="input-label">First Name</label>
@@ -241,6 +259,7 @@ const SignupPage = () => {
                     placeholder="John"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
+                    required
                   />
                 </div>
                 <div className="input-group">
@@ -251,6 +270,7 @@ const SignupPage = () => {
                     placeholder="Doe"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -263,6 +283,7 @@ const SignupPage = () => {
                   placeholder="your@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
 
@@ -272,18 +293,18 @@ const SignupPage = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     className="form-input"
-                    placeholder="Create a strong password"
+                    placeholder="Create a password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    style={{ paddingRight: '40px' }}
+                    required
                   />
                   <button
                     type="button"
                     className="password-toggle-btn"
-                    style={{ position: 'absolute', right: '12px', top: '9px' }}
+                    style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }}
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? '🙈' : '👁'}
+                    {showPassword ? 'Hide' : 'Show'}
                   </button>
                 </div>
               </div>
@@ -297,15 +318,15 @@ const SignupPage = () => {
                     placeholder="Confirm your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    style={{ paddingRight: '40px' }}
+                    required
                   />
                   <button
                     type="button"
                     className="password-toggle-btn"
-                    style={{ position: 'absolute', right: '12px', top: '9px' }}
+                    style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }}
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
-                    {showConfirmPassword ? '🙈' : '👁'}
+                    {showConfirmPassword ? 'Hide' : 'Show'}
                   </button>
                 </div>
               </div>
@@ -318,21 +339,22 @@ const SignupPage = () => {
                   onChange={(e) => setAgreeToTerms(e.target.checked)}
                 />
                 <span>
-                  I agree to the <a href="#" style={{ color: '#b85c8b', textDecoration: 'none' }}>Terms of Service</a> and <a href="#" style={{ color: '#b85c8b', textDecoration: 'none' }}>Privacy Policy</a>
+                  I agree to the <a href="#" style={{ color: '#b85c8b' }}>Terms of Service</a> and{' '}
+                  <a href="#" style={{ color: '#b85c8b' }}>Privacy Policy</a>
                 </span>
               </div>
 
               <button 
-                onClick={handleSubmit}
+                type="submit" 
                 className="signup-button"
-                disabled={!agreeToTerms}
+                disabled={loading || !agreeToTerms}
               >
-                Create Account
+                {loading ? 'Creating Account...' : 'Create Account'}
               </button>
-            </div>
+            </form>
 
             <div className="login-link">
-              Already have an account? <a href="#">Sign in here</a>
+              Already have an account? <Link to="/login">Sign in</Link>
             </div>
           </div>
 

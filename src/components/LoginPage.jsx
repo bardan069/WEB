@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login:', { email, password });
+    setLoading(true);
+    
+    const result = await login(email, password);
+    if (result.success) {
+      navigate('/');
+    }
+    setLoading(false);
   };
 
   return (
@@ -145,14 +157,36 @@ const LoginPage = () => {
           transition: background 0.3s ease;
         }
 
-        .login-button:hover {
+        .login-button:hover:not(:disabled) {
           background: linear-gradient(to right, #c86a99, #a64a78);
+        }
+
+        .login-button:disabled {
+          background: #ccc;
+          cursor: not-allowed;
         }
 
         .login-image {
           flex: 1;
-        background: url('/.download.jpeg') no-repeat center center;
-        background-size: cover;
+          background: url('/download.jpeg') no-repeat center center;
+          background-size: cover;
+        }
+
+        .signup-link {
+          text-align: center;
+          font-size: 13px;
+          color: #777;
+          margin-top: 20px;
+        }
+
+        .signup-link a {
+          color: #b85c8b;
+          text-decoration: none;
+          font-weight: 500;
+        }
+
+        .signup-link a:hover {
+          text-decoration: underline;
         }
 
         @media (max-width: 768px) {
@@ -200,33 +234,44 @@ const LoginPage = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     className="form-input"
-                    placeholder="********"
+                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    style={{ paddingRight: '40px' }}
                   />
                   <button
                     type="button"
                     className="password-toggle-btn"
-                    style={{ position: 'absolute', right: '12px', top: '9px' }}
+                    style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }}
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? '🙈' : '👁'}
+                    {showPassword ? 'Hide' : 'Show'}
                   </button>
                 </div>
               </div>
 
               <div className="options-row">
-                <label>
-                  <input type="checkbox" style={{ marginRight: '6px' }} />
-                  Remember Me
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input type="checkbox" />
+                  Remember me
                 </label>
-                <a href="#" style={{ color: '#b85c8b', textDecoration: 'none' }}>Forgot password?</a>
+                <a href="#" style={{ color: '#b85c8b', textDecoration: 'none' }}>
+                  Forgot password?
+                </a>
               </div>
 
-              <button type="submit" className="login-button">Login</button>
+              <button 
+                type="submit" 
+                className="login-button"
+                disabled={loading}
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
             </form>
+
+            <div className="signup-link">
+              Don't have an account? <Link to="/signup">Sign up</Link>
+            </div>
           </div>
 
           <div className="login-image"></div>
