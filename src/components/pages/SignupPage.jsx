@@ -1,21 +1,36 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 
-const LoginPage = () => {
+const SignupPage = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { signup } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     
-    const result = await login(email, password);
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (!agreeToTerms) {
+      toast.error('Please agree to the terms and conditions');
+      return;
+    }
+
+    setLoading(true);
+    const result = await signup({ firstName, lastName, email, password });
     if (result.success) {
       navigate('/');
     }
@@ -32,15 +47,15 @@ const LoginPage = () => {
           background: linear-gradient(to right, #fbeaec, #fff0f5);
         }
 
-        .login-wrapper {
+        .signup-wrapper {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 100vh;
+          min-height: 100vh;
           padding: 20px;
         }
 
-        .login-box {
+        .signup-box {
           display: flex;
           background: #fff;
           border-radius: 20px;
@@ -50,7 +65,7 @@ const LoginPage = () => {
           box-shadow: 0 12px 40px rgba(223, 182, 203, 0.25);
         }
 
-        .login-form-container {
+        .signup-form-container {
           flex: 1;
           padding: 40px;
           display: flex;
@@ -58,27 +73,27 @@ const LoginPage = () => {
           justify-content: center;
         }
 
-        .login-brand {
+        .signup-brand {
           font-size: 22px;
           font-weight: bold;
           color: #c94f7c;
           margin-bottom: 12px;
         }
 
-        .login-heading {
+        .signup-heading {
           font-size: 26px;
           font-weight: 600;
           margin-bottom: 8px;
           color: #2c2c2c;
         }
 
-        .login-subtext {
+        .signup-subtext {
           font-size: 13px;
           color: #777;
           margin-bottom: 24px;
         }
 
-        .google-login {
+        .google-signup {
           border: 1px solid #ccc;
           border-radius: 30px;
           padding: 10px 20px;
@@ -94,7 +109,7 @@ const LoginPage = () => {
           transition: all 0.3s ease;
         }
 
-        .google-login:hover {
+        .google-signup:hover {
           background: #fce4ec;
         }
 
@@ -110,6 +125,15 @@ const LoginPage = () => {
           flex-direction: column;
           gap: 6px;
           margin-bottom: 16px;
+        }
+
+        .name-row {
+          display: flex;
+          gap: 12px;
+        }
+
+        .name-row .input-group {
+          flex: 1;
         }
 
         .input-label {
@@ -137,15 +161,20 @@ const LoginPage = () => {
           color: #888;
         }
 
-        .options-row {
+        .terms-row {
           display: flex;
-          justify-content: space-between;
-          align-items: center;
+          align-items: flex-start;
+          gap: 8px;
           font-size: 13px;
           margin-bottom: 20px;
+          line-height: 1.4;
         }
 
-        .login-button {
+        .terms-checkbox {
+          margin-top: 2px;
+        }
+
+        .signup-button {
           background: linear-gradient(to right, #d47fa6, #b85c8b);
           color: white;
           border: none;
@@ -155,67 +184,97 @@ const LoginPage = () => {
           font-weight: bold;
           cursor: pointer;
           transition: background 0.3s ease;
+          margin-bottom: 16px;
         }
 
-        .login-button:hover:not(:disabled) {
+        .signup-button:hover:not(:disabled) {
           background: linear-gradient(to right, #c86a99, #a64a78);
         }
 
-        .login-button:disabled {
+        .signup-button:disabled {
           background: #ccc;
           cursor: not-allowed;
         }
 
-        .login-image {
-          flex: 1;
-          background: url('/download.jpeg') no-repeat center center;
-          background-size: cover;
-        }
-
-        .signup-link {
+        .login-link {
           text-align: center;
           font-size: 13px;
           color: #777;
-          margin-top: 20px;
         }
 
-        .signup-link a {
+        .login-link a {
           color: #b85c8b;
           text-decoration: none;
           font-weight: 500;
         }
 
-        .signup-link a:hover {
+        .login-link a:hover {
           text-decoration: underline;
         }
 
+        .signup-image {
+          flex: 1;
+          background: url('/download.jpeg') no-repeat center center;
+          background-size: cover;
+        }
+
         @media (max-width: 768px) {
-          .login-box {
+          .signup-box {
             flex-direction: column;
             border-radius: 0;
           }
 
-          .login-image {
+          .signup-image {
             height: 220px;
+          }
+
+          .name-row {
+            flex-direction: column;
+            gap: 0;
           }
         }
       `}</style>
 
-      <div className="login-wrapper">
-        <div className="login-box">
-          <div className="login-form-container">
-            <div className="login-brand">HEART & HUES</div>
-            <h2 className="login-heading">Login</h2>
-            <p className="login-subtext">Choose a gift for any occasion 🎁</p>
+      <div className="signup-wrapper">
+        <div className="signup-box">
+          <div className="signup-form-container">
+            <div className="signup-brand">HEART & HUES</div>
+            <h2 className="signup-heading">Create Account</h2>
+            <p className="signup-subtext">Join us and discover perfect gifts 🎁</p>
 
-            <div className="google-login">
+            <div className="google-signup">
               <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google" />
-              Sign in with Google
+              Sign up with Google
             </div>
 
             <div className="divider">OR</div>
 
             <form onSubmit={handleSubmit}>
+              <div className="name-row">
+                <div className="input-group">
+                  <label className="input-label">First Name</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="John"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="input-group">
+                  <label className="input-label">Last Name</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Doe"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
               <div className="input-group">
                 <label className="input-label">Email</label>
                 <input
@@ -234,7 +293,7 @@ const LoginPage = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     className="form-input"
-                    placeholder="Enter your password"
+                    placeholder="Create a password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -250,35 +309,60 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              <div className="options-row">
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" />
-                  Remember me
-                </label>
-                <a href="#" style={{ color: '#b85c8b', textDecoration: 'none' }}>
-                  Forgot password?
-                </a>
+              <div className="input-group">
+                <label className="input-label">Confirm Password</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    className="form-input"
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }}
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="terms-row">
+                <input
+                  type="checkbox"
+                  className="terms-checkbox"
+                  checked={agreeToTerms}
+                  onChange={(e) => setAgreeToTerms(e.target.checked)}
+                />
+                <span>
+                  I agree to the <a href="#" style={{ color: '#b85c8b' }}>Terms of Service</a> and{' '}
+                  <a href="#" style={{ color: '#b85c8b' }}>Privacy Policy</a>
+                </span>
               </div>
 
               <button 
                 type="submit" 
-                className="login-button"
-                disabled={loading}
+                className="signup-button"
+                disabled={loading || !agreeToTerms}
               >
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
 
-            <div className="signup-link">
-              Don't have an account? <Link to="/signup">Sign up</Link>
+            <div className="login-link">
+              Already have an account? <Link to="/login">Sign in</Link>
             </div>
           </div>
 
-          <div className="login-image"></div>
+          <div className="signup-image"></div>
         </div>
       </div>
     </>
   );
 };
 
-export default LoginPage;
+export default SignupPage;
