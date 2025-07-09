@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaShoppingCart, FaUser, FaBars, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -11,6 +11,8 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const { getCartCount } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -19,6 +21,21 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleSectionLink = (hash) => {
+    const sectionId = hash.replace('#', '');
+    if (location.pathname !== '/') {
+      navigate('/', { replace: false });
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMenuOpen(false);
   };
 
   const navbarStyles = {
@@ -179,8 +196,22 @@ const Navbar = () => {
     display: 'none'
   };
 
+  // Add responsive styles for mobile
+  const responsiveStyles = `
+    @media (max-width: 768px) {
+      .desktop-nav {
+        display: none !important;
+      }
+      
+      .menu-button {
+        display: block !important;
+      }
+    }
+  `;
+
   return (
     <>
+      <style>{responsiveStyles}</style>
       <nav style={navbarStyles}>
         <div style={containerStyles}>
           <Link to="/" style={brandStyles}>HEART & HUES</Link>
@@ -188,7 +219,16 @@ const Navbar = () => {
           <ul style={navLinksStyles} className="desktop-nav">
             {NAVIGATION_LINKS.map((link) => (
               <li key={link.name}>
-                <Link to={link.path} style={navLinkStyles}>{link.name}</Link>
+                {link.path.startsWith('#') ? (
+                  <button
+                    style={{ ...navLinkStyles, background: 'none', border: 'none', cursor: 'pointer' }}
+                    onClick={() => handleSectionLink(link.path)}
+                  >
+                    {link.name}
+                  </button>
+                ) : (
+                  <Link to={link.path} style={navLinkStyles}>{link.name}</Link>
+                )}
               </li>
             ))}
           </ul>
@@ -232,7 +272,7 @@ const Navbar = () => {
               </div>
             )}
 
-            <button style={menuButtonStyles} onClick={toggleMenu}>
+            <button style={menuButtonStyles} className="menu-button" onClick={toggleMenu}>
               {isMenuOpen ? <FaTimes /> : <FaBars />}
             </button>
           </div>
@@ -244,15 +284,47 @@ const Navbar = () => {
         <ul style={mobileNavLinksStyles}>
           {NAVIGATION_LINKS.map((link) => (
             <li key={link.name}>
-              <Link 
-                to={link.path} 
-                style={mobileNavLinkStyles}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {link.name}
-              </Link>
+              {link.path.startsWith('#') ? (
+                <button
+                  style={{ ...mobileNavLinkStyles, background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+                  onClick={() => handleSectionLink(link.path)}
+                >
+                  {link.name}
+                </button>
+              ) : (
+                <Link 
+                  to={link.path} 
+                  style={mobileNavLinkStyles}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              )}
             </li>
           ))}
+          
+          {!isAuthenticated && (
+            <>
+              <li>
+                <Link 
+                  to="/login" 
+                  style={mobileNavLinkStyles}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/signup" 
+                  style={mobileNavLinkStyles}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </>

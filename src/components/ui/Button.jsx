@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { COLORS, GRADIENTS } from '../../constants/colors';
 
 const Button = ({ 
@@ -10,6 +11,8 @@ const Button = ({
   type = 'button',
   fullWidth = false,
   className = '',
+  as,
+  to,
   ...props 
 }) => {
   const baseStyles = {
@@ -84,6 +87,21 @@ const Button = ({
     ...variantStyles[variant]
   };
 
+  // If 'as' prop is provided and it's Link, render as Link
+  if (as === Link && to) {
+    return (
+      <Link
+        to={to}
+        className={className}
+        style={combinedStyles}
+        {...props}
+      >
+        {children}
+      </Link>
+    );
+  }
+
+  // Otherwise render as button
   return (
     <button
       type={type}

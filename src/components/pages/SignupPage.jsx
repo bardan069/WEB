@@ -32,7 +32,8 @@ const SignupPage = () => {
     setLoading(true);
     const result = await signup({ firstName, lastName, email, password });
     if (result.success) {
-      navigate('/');
+      toast.success('Account created successfully! Please log in.');
+      navigate('/login');
     }
     setLoading(false);
   };

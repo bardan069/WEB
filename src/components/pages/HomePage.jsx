@@ -133,8 +133,6 @@ const HomePage = () => {
     addToCart(product);
   };
 
-
-
   return (
     <>
       <style>{`
@@ -149,8 +147,6 @@ const HomePage = () => {
           background: #fff;
           overflow-x: hidden;
         }
-
-
 
         .hero-section {
           height: 100vh;
@@ -395,11 +391,7 @@ const HomePage = () => {
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
           }
         }
-
-
       `}</style>
-
-
 
       <section className="hero-section">
         {heroSlides.map((slide, index) => (
@@ -473,7 +465,14 @@ const HomePage = () => {
         </div>
       </section>
 
-
+      <section id="about" style={{ padding: '80px 20px', background: '#fefefe' }}>
+        <h2 className="section-title">About Us</h2>
+        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', color: '#555', fontSize: '18px', lineHeight: '1.7' }}>
+          <p>
+            Heart & Hues is your destination for finding the perfect gift for every occasion. We believe in celebrating life's special moments with thoughtful, curated presents that bring joy to both the giver and the receiver. Our handpicked selection is designed to help you express love, gratitude, and happiness in the most meaningful way.
+          </p>
+        </div>
+      </section>
     </>
   );
 };

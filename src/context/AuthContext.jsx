@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
@@ -15,46 +14,43 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
-
-  // Set up axios defaults
-  axios.defaults.baseURL = 'http://localhost:5000/api';
-  axios.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';
 
   useEffect(() => {
-    if (token) {
-      checkAuthStatus();
-    } else {
-      setLoading(false);
+    // Check if user is stored in localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('user');
+      }
     }
-  }, [token]);
-
-  const checkAuthStatus = async () => {
-    try {
-      const response = await axios.get('/auth/me');
-      setUser(response.data.user);
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  };
+    setLoading(false);
+  }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('/auth/login', { email, password });
-      const { token: newToken, user: userData } = response.data;
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      localStorage.setItem('token', newToken);
-      setToken(newToken);
-      setUser(userData);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+      // Get stored users
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      if (!user) {
+        throw new Error('Invalid email or password');
+      }
+      
+      // Remove password from user object before storing
+      const { password: _, ...userWithoutPassword } = user;
+      setUser(userWithoutPassword);
+      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
       
       toast.success('Welcome back!');
       return { success: true };
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
+      const message = error.message || 'Login failed';
       toast.error(message);
       return { success: false, error: message };
     }
@@ -62,39 +58,65 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (userData) => {
     try {
-      const response = await axios.post('/auth/signup', userData);
-      const { token: newToken, user: newUser } = response.data;
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      localStorage.setItem('token', newToken);
-      setToken(newToken);
-      setUser(newUser);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+      // Get existing users
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      // Check if email already exists
+      if (users.some(u => u.email === userData.email)) {
+        throw new Error('Email already exists');
+      }
+      
+      // Create new user
+      const newUser = {
+        id: Date.now().toString(),
+        ...userData,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Add to users array
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
       
       toast.success('Account created successfully!');
       return { success: true };
     } catch (error) {
-      const message = error.response?.data?.message || 'Signup failed';
+      const message = error.message || 'Signup failed';
       toast.error(message);
       return { success: false, error: message };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
+    localStorage.removeItem('user');
     setUser(null);
-    delete axios.defaults.headers.common['Authorization'];
     toast.success('Logged out successfully');
   };
 
   const updateProfile = async (profileData) => {
     try {
-      const response = await axios.put('/auth/profile', profileData);
-      setUser(response.data.user);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Update user data
+      const updatedUser = { ...user, ...profileData };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      // Update in users array
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const userIndex = users.findIndex(u => u.id === user.id);
+      if (userIndex !== -1) {
+        users[userIndex] = { ...users[userIndex], ...profileData };
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+      
       toast.success('Profile updated successfully!');
       return { success: true };
     } catch (error) {
-      const message = error.response?.data?.message || 'Profile update failed';
+      const message = error.message || 'Profile update failed';
       toast.error(message);
       return { success: false, error: message };
     }

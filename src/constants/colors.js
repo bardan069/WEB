@@ -1,58 +1,29 @@
 export const COLORS = {
-  // Primary brand colors
-  primary: '#c94f7c',
-  primaryLight: '#d47fa6',
-  primaryDark: '#b85c8b',
-  primaryDarker: '#a64a78',
-  
-  // Secondary colors
-  secondary: '#f3e6ee',
-  secondaryLight: '#f8f0f5',
-  secondaryDark: '#e8d5e0',
-  
-  // Accent colors
-  accent: '#ff6b9d',
-  accentLight: '#ff8fab',
-  accentDark: '#f4a6cd',
-  
-  // Neutral colors
-  white: '#ffffff',
+  primary: '#FF6B9D',
+  primaryDark: '#E55A8A',
+  secondary: '#6B9DFF',
+  accent: '#FFD93D',
+  success: '#4CAF50',
+  warning: '#FF9800',
+  error: '#F44336',
+  textPrimary: '#2C3E50',
+  textSecondary: '#7F8C8D',
+  textLight: '#95A5A6',
+  white: '#FFFFFF',
   black: '#000000',
-  gray: '#666666',
-  grayLight: '#888888',
-  grayDark: '#333333',
-  
-  // Status colors
-  success: '#4caf50',
-  warning: '#ff9800',
-  error: '#f44336',
-  info: '#2196f3',
-  
-  // Background colors
-  background: '#ffffff',
-  backgroundLight: '#fafafa',
-  backgroundDark: '#f5f5f5',
-  
-  // Text colors
-  textPrimary: '#333333',
-  textSecondary: '#666666',
-  textLight: '#888888',
-  textInverse: '#ffffff',
-  
-  // Border colors
-  border: '#e8d5e0',
-  borderLight: '#f0f0f0',
-  borderDark: '#d0d0d0',
-  
-  // Shadow colors
-  shadow: 'rgba(0, 0, 0, 0.08)',
-  shadowLight: 'rgba(223, 182, 203, 0.1)',
-  shadowDark: 'rgba(0, 0, 0, 0.15)',
+  gray: '#F5F5F5',
+  grayDark: '#E0E0E0',
+  border: '#E1E8ED',
+  borderLight: '#F0F0F0',
+  shadow: 'rgba(0, 0, 0, 0.1)',
+  shadowLight: 'rgba(0, 0, 0, 0.05)',
+  background: '#FAFAFA',
+  backgroundLight: '#FFFFFF'
 };
 
 export const GRADIENTS = {
-  primary: 'linear-gradient(to right, #d47fa6, #b85c8b)',
-  primaryHover: 'linear-gradient(to right, #c86a99, #a64a78)',
-  secondary: 'linear-gradient(135deg, #f8f0f5 0%, #f3e6ee 100%)',
-  accent: 'linear-gradient(45deg, #ff6b9d, #ff8fab)',
+  primary: 'linear-gradient(135deg, #FF6B9D 0%, #FF8EAB 100%)',
+  secondary: 'linear-gradient(135deg, #6B9DFF 0%, #8EABFF 100%)',
+  accent: 'linear-gradient(135deg, #FFD93D 0%, #FFE55A 100%)',
+  background: 'linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%)'
 }; 
