@@ -36,7 +36,7 @@ const CartPage = () => {
     }
 
     const result = await checkout(shippingInfo);
-    if (result.success) {
+    if (result && result.success) {
       navigate('/');
     }
   };

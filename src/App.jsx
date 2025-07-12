@@ -11,7 +11,9 @@ import {
   ProductPage, 
   CartPage, 
   ProfilePage, 
-  AuthApp 
+  AuthApp, 
+  AdminLoginPage, 
+  AdminDashboard 
 } from './components/pages';
 
 // PrivateRoute component for protecting routes
@@ -21,6 +23,11 @@ function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
   if (loading) return <div>Loading...</div>;
   return isAuthenticated ? children : <Navigate to="/login" />;
+}
+
+function AdminRoute({ children }) {
+  const { isAdmin } = useAuth();
+  return isAdmin ? children : <Navigate to="/admin-login" />;
 }
 
 function App() {
@@ -52,6 +59,12 @@ function App() {
                 </PrivateRoute>
               } />
               <Route path="/auth" element={<AuthApp />} />
+              <Route path="/admin-login" element={<AdminLoginPage />} />
+              <Route path="/admin-dashboard" element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              } />
             </Routes>
           </Layout>
         </Router>

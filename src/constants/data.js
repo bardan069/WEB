@@ -1,8 +1,7 @@
 export const NAVIGATION_LINKS = [
   { name: 'Home', path: '/' },
   { name: 'Products', path: '#products' },
-  { name: 'About', path: '#about' },
-  { name: 'Contact', path: '#contact' }
+  { name: 'About', path: '#about' }
 ];
 
 export const FOOTER_LINKS = {

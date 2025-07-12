@@ -1,95 +1,46 @@
-# Heart & Hues - Gift Shop Application
+# Heart & Hues - Innovative E-commerce Gift Platform
 
-A beautiful and modern gift shop application built with React frontend and Node.js backend.
+## 🎁 Project Overview
 
-## Features
+**Heart & Hues** is a cutting-edge e-commerce platform that revolutionizes the gift-giving experience through innovative features and modern technology. Built with React frontend and Node.js backend, this platform offers unique solutions that set it apart from traditional e-commerce sites.
 
-### Frontend Features
-- 🎨 Modern, responsive UI with beautiful design
-- 🔐 User authentication (login/signup)
-- 🛒 Shopping cart functionality
-- 📱 Mobile-friendly design
-- 🎯 Product browsing and filtering
-- ⭐ Product reviews and ratings
-- 👤 User profile management
-- 💳 Checkout process
-- 🔍 Search functionality
-- 📋 Order history
+### 🌟 Novel Features & Distinct Solutions
 
-### Backend Features
-- 🔐 JWT-based authentication
-- 🗄️ MongoDB database with Mongoose ODM
-- 📦 RESTful API endpoints
-- ✅ Input validation and sanitization
-- 🔒 Role-based access control (Admin/User)
-- 📊 Order management system
-- 🛡️ Security middleware (Helmet, CORS, Rate limiting)
-- 📝 Comprehensive error handling
-- 🎯 Product management with categories
-- 👥 User management system
+1. **AI-Powered Gift Recommendations** - Advanced algorithm that considers occasion, recipient type, budget, and personal preferences
+2. **Gift Registry System** - Collaborative gift-giving for special events with real-time tracking
+3. **Subscription Gift Boxes** - Curated monthly/quarterly gift deliveries with personalized themes
+4. **Smart Personalization Engine** - Dynamic product customization with real-time preview
+5. **Social Gifting** - Group gift contributions and shared experiences
+6. **Intelligent Inventory Management** - Predictive stock management with automated alerts
 
-## Tech Stack
+## 🛠 Technology Stack
 
 ### Frontend
-- **React 19** - UI library
+- **React 18** - Modern UI framework with hooks and context
+- **Vite** - Fast build tool and development server
 - **React Router** - Client-side routing
-- **Axios** - HTTP client
-- **React Hot Toast** - Notifications
-- **React Icons** - Icon library
-- **Vite** - Build tool
+- **CSS3** - Modern styling with custom design system
+- **React Icons** - Comprehensive icon library
 
 ### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **MongoDB** - Database
-- **Mongoose** - ODM for MongoDB
-- **JWT** - Authentication
+- **Node.js** - Server-side JavaScript runtime
+- **Express.js** - Web application framework
+- **PostgreSQL** - Relational database
+- **Sequelize ORM** - Database abstraction layer
+- **JWT** - Stateless authentication
 - **bcryptjs** - Password hashing
 - **express-validator** - Input validation
-- **Helmet** - Security middleware
-- **CORS** - Cross-origin resource sharing
 
-## Project Structure
+### Database
+- **PostgreSQL** - Robust relational database
+- **Advanced indexing** for performance
+- **JSON fields** for flexible data storage
 
-```
-react100/
-├── src/                          # Frontend source code
-│   ├── components/               # React components
-│   │   ├── HomePage.jsx         # Main homepage
-│   │   ├── LoginPage.jsx        # Login form
-│   │   ├── SignupPage.jsx       # Registration form
-│   │   ├── ProductPage.jsx      # Product details
-│   │   ├── CartPage.jsx         # Shopping cart
-│   │   └── ProfilePage.jsx      # User profile
-│   ├── context/                 # React context providers
-│   │   ├── AuthContext.jsx      # Authentication state
-│   │   └── CartContext.jsx      # Shopping cart state
-│   ├── App.jsx                  # Main app component
-│   └── main.jsx                 # App entry point
-├── backend/                     # Backend source code
-│   ├── models/                  # Database models
-│   │   ├── User.js             # User model
-│   │   ├── Product.js          # Product model
-│   │   └── Order.js            # Order model
-│   ├── routes/                 # API routes
-│   │   ├── auth.js             # Authentication routes
-│   │   ├── products.js         # Product routes
-│   │   ├── orders.js           # Order routes
-│   │   └── users.js            # User management routes
-│   ├── middleware/             # Custom middleware
-│   │   └── auth.js             # Authentication middleware
-│   ├── server.js               # Express server
-│   ├── package.json            # Backend dependencies
-│   └── env.example             # Environment variables template
-├── package.json                # Frontend dependencies
-└── README.md                   # This file
-```
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v16 or higher)
-- MongoDB (local installation or MongoDB Atlas)
+- Node.js (v18 or higher)
+- PostgreSQL (v12 or higher)
 - npm or yarn package manager
 
 ### Installation
@@ -111,169 +62,301 @@ react100/
    npm install
    ```
 
-4. **Set up environment variables**
+4. **Set up PostgreSQL database**
+   ```bash
+   # Create database
+   createdb heart_and_hues
+   
+   # Or using psql
+   psql -U postgres
+   CREATE DATABASE heart_and_hues;
+   \q
+   ```
+
+5. **Configure environment variables**
    ```bash
    cd backend
    cp env.example .env
    ```
    
-   Edit the `.env` file with your configuration:
+   Edit `.env` file with your database credentials:
    ```env
-   PORT=5000
-   NODE_ENV=development
-   MONGODB_URI=mongodb://localhost:27017/heart-hues
-   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-   JWT_EXPIRE=7d
-   FRONTEND_URL=http://localhost:5173
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=heart_and_hues
+   DB_USER=postgres
+   DB_PASSWORD=your_password
+   JWT_SECRET=your-super-secret-jwt-key
    ```
 
-5. **Start MongoDB**
-   - If using local MongoDB: `mongod`
-   - If using MongoDB Atlas: Update the connection string in `.env`
+6. **Seed the database**
+   ```bash
+   cd backend
+   npm run seed
+   ```
 
-6. **Start the backend server**
+7. **Start the backend server**
    ```bash
    cd backend
    npm run dev
    ```
 
-7. **Start the frontend development server**
+8. **Start the frontend development server**
    ```bash
-   # In a new terminal, from the root directory
+   # In a new terminal
    npm run dev
    ```
 
-8. **Access the application**
+9. **Access the application**
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:5000
    - API Health Check: http://localhost:5000/api/health
+   - API Documentation: http://localhost:5000/api/docs
 
-## API Endpoints
+## 📁 Project Structure
+
+```
+react100/
+├── src/                    # Frontend source code
+│   ├── components/         # React components
+│   │   ├── layout/        # Layout components
+│   │   ├── pages/         # Page components
+│   │   └── ui/            # Reusable UI components
+│   ├── context/           # React context providers
+│   ├── constants/         # Application constants
+│   ├── styles/            # Global styles
+│   └── utils/             # Utility functions
+├── backend/               # Backend source code
+│   ├── config/           # Configuration files
+│   ├── models/           # Database models
+│   ├── routes/           # API routes
+│   ├── middleware/       # Custom middleware
+│   └── scripts/          # Database scripts
+├── public/               # Static assets
+└── README.md            # Project documentation
+```
+
+## 🔧 Available Scripts
+
+### Frontend
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+```
+
+### Backend
+```bash
+npm run dev          # Start development server with nodemon
+npm start            # Start production server
+npm run seed         # Seed database with sample data
+npm run test         # Run tests
+npm run migrate      # Run database migrations
+```
+
+## 🎯 Core Features
+
+### 1. AI-Powered Gift Recommendations
+- **Smart Algorithm**: Considers occasion, recipient type, budget, and preferences
+- **Real-time Scoring**: Dynamic product ranking based on multiple factors
+- **Personalized Reasoning**: Explains why each recommendation was chosen
+- **Feedback Loop**: Improves recommendations based on user feedback
+
+### 2. Gift Registry System
+- **Event Management**: Create registries for weddings, birthdays, baby showers
+- **Collaborative Gifting**: Multiple contributors can purchase items
+- **Real-time Tracking**: Live updates on purchased vs. remaining items
+- **Privacy Controls**: Public or private registry options
+
+### 3. Subscription Gift Boxes
+- **Themed Curations**: Monthly/quarterly boxes with specific themes
+- **Personalization**: Custom preferences and recipient profiles
+- **Flexible Scheduling**: Pause, resume, or cancel subscriptions
+- **Quality Assurance**: Curated by gift experts
+
+### 4. Advanced User Management
+- **Secure Authentication**: JWT-based with bcrypt password hashing
+- **Role-based Access**: User, Moderator, and Admin roles
+- **Account Security**: Rate limiting, account locking, CSRF protection
+- **Profile Customization**: Extensive user preferences and settings
+
+### 5. Product Management
+- **Rich Product Data**: Comprehensive product information and metadata
+- **Smart Categorization**: Multi-level category system with tags
+- **Inventory Management**: Real-time stock tracking with low-stock alerts
+- **Personalization Options**: Text, images, colors, and engraving
+
+## 🔌 API Endpoints
 
 ### Authentication
-- `POST /api/auth/signup` - Register new user
+- `POST /api/auth/signup` - User registration
 - `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user
+- `GET /api/auth/me` - Get current user profile
 - `PUT /api/auth/profile` - Update user profile
-- `POST /api/auth/change-password` - Change password
+- `PUT /api/auth/password` - Change password
 
 ### Products
-- `GET /api/products` - Get all products (with filtering/pagination)
+- `GET /api/products` - Get all products with filtering
 - `GET /api/products/featured` - Get featured products
-- `GET /api/products/categories` - Get all categories
 - `GET /api/products/:id` - Get single product
-- `POST /api/products/:id/reviews` - Add product review
-- `POST /api/products` - Create product (Admin)
-- `PUT /api/products/:id` - Update product (Admin)
-- `DELETE /api/products/:id` - Delete product (Admin)
+- `GET /api/products/categories` - Get all categories
 
-### Orders
-- `POST /api/orders` - Create new order
-- `GET /api/orders` - Get user orders
-- `GET /api/orders/:id` - Get single order
-- `PUT /api/orders/:id/status` - Update order status (Admin)
-- `POST /api/orders/:id/cancel` - Cancel order
+### Recommendations
+- `POST /api/recommendations/generate` - Generate AI recommendations
+- `GET /api/recommendations/:userId` - Get user recommendations
+- `POST /api/recommendations/feedback` - Provide feedback
 
-### Users (Admin)
-- `GET /api/users` - Get all users
-- `GET /api/users/:id` - Get user by ID
-- `PUT /api/users/:id` - Update user
-- `DELETE /api/users/:id` - Delete user
-- `POST /api/users/:id/wishlist` - Add to wishlist
-- `DELETE /api/users/:id/wishlist/:productId` - Remove from wishlist
-- `GET /api/users/:id/wishlist` - Get user wishlist
+### Gift Registry
+- `POST /api/registry/create` - Create gift registry
+- `GET /api/registry/:registryId` - Get registry details
+- `POST /api/registry/:registryId/contribute` - Contribute to registry
+- `GET /api/registry/user/:userId` - Get user's registries
 
-## Usage
+### Subscriptions
+- `POST /api/subscriptions/create` - Create subscription
+- `GET /api/subscriptions/:userId` - Get user subscriptions
+- `PUT /api/subscriptions/:id/pause` - Pause subscription
+- `PUT /api/subscriptions/:id/resume` - Resume subscription
 
-### For Users
-1. **Browse Products**: Visit the homepage to see featured products
-2. **Create Account**: Sign up for a new account
-3. **Add to Cart**: Click "Add to Cart" on any product
-4. **Checkout**: Go to cart and complete the checkout process
-5. **Track Orders**: View order history in your profile
+## 🛡 Security Features
 
-### For Admins
-1. **Manage Products**: Add, edit, or delete products
-2. **Manage Orders**: Update order status and track shipments
-3. **Manage Users**: View and manage user accounts
-4. **Analytics**: Monitor sales and user activity
+- **JWT Authentication** with secure token management
+- **Password Hashing** using bcrypt with 12 rounds
+- **Rate Limiting** to prevent abuse
+- **Input Validation** and sanitization
+- **CORS Protection** for cross-origin requests
+- **Helmet.js** for security headers
+- **Account Locking** after failed login attempts
+- **CSRF Protection** for state-changing operations
 
-## Development
+## 📊 Database Schema
 
-### Frontend Development
-```bash
-# Start development server
-npm run dev
+### Core Tables
+- **users** - User accounts and profiles
+- **products** - Product catalog with rich metadata
+- **orders** - Order management and tracking
+- **order_items** - Individual items in orders
+- **gift_registries** - Registry management
+- **registry_items** - Items in registries
+- **subscriptions** - Subscription gift boxes
+- **subscription_deliveries** - Delivery tracking
 
-# Build for production
-npm run build
+### Advanced Features
+- **JSON fields** for flexible data storage
+- **Comprehensive indexing** for performance
+- **Foreign key relationships** for data integrity
+- **Timestamps** for audit trails
 
-# Preview production build
-npm run preview
+## 🎨 Design System
 
-# Run linting
-npm run lint
-```
+### Color Palette
+- **Primary**: #FF6B6B (Coral Red)
+- **Secondary**: #4ECDC4 (Turquoise)
+- **Accent**: #45B7D1 (Sky Blue)
+- **Neutral**: #F7F7F7 (Light Gray)
+- **Text**: #2C3E50 (Dark Blue Gray)
 
-### Backend Development
-```bash
-# Start development server with nodemon
-npm run dev
+### Typography
+- **Headings**: Modern sans-serif with bold weights
+- **Body**: Clean, readable font with optimal line height
+- **Responsive**: Scales appropriately across devices
 
-# Start production server
-npm start
-```
+### Components
+- **Consistent spacing** and padding
+- **Smooth animations** and transitions
+- **Accessible design** with proper contrast
+- **Mobile-first** responsive design
 
-### Database Seeding
-To populate the database with sample data, you can create a seeding script:
-
-```javascript
-// backend/scripts/seed.js
-const mongoose = require('mongoose');
-const Product = require('../models/Product');
-const User = require('../models/User');
-
-// Add sample products and users
-// Run with: node scripts/seed.js
-```
-
-## Deployment
+## 🚀 Deployment
 
 ### Frontend Deployment
-1. Build the project: `npm run build`
-2. Deploy the `dist` folder to your hosting service (Vercel, Netlify, etc.)
+```bash
+npm run build
+# Deploy dist/ folder to your hosting service
+```
 
 ### Backend Deployment
-1. Set up environment variables on your hosting platform
-2. Deploy to platforms like Heroku, Railway, or DigitalOcean
-3. Ensure MongoDB connection is configured
+```bash
+# Set NODE_ENV=production
+npm start
+# Deploy to your server or cloud platform
+```
 
-## Security Features
+### Database Deployment
+- Use managed PostgreSQL service (AWS RDS, Google Cloud SQL, etc.)
+- Set up proper backups and monitoring
+- Configure connection pooling for production
 
-- JWT token authentication
-- Password hashing with bcrypt
-- Input validation and sanitization
-- CORS protection
-- Rate limiting
-- Helmet security headers
-- Role-based access control
+## 🧪 Testing
 
-## Contributing
+### Frontend Testing
+```bash
+npm run test
+```
+
+### Backend Testing
+```bash
+cd backend
+npm run test
+```
+
+### API Testing
+- Use Postman or similar tool
+- Test all endpoints with various scenarios
+- Verify error handling and validation
+
+## 📈 Performance Optimization
+
+### Frontend
+- **Code splitting** for faster initial load
+- **Lazy loading** for components and routes
+- **Image optimization** with proper formats
+- **Caching strategies** for static assets
+
+### Backend
+- **Database indexing** for query optimization
+- **Connection pooling** for database efficiency
+- **Compression middleware** for response size
+- **Rate limiting** to prevent abuse
+
+## 🔮 Future Enhancements
+
+1. **Mobile App** - Native iOS and Android applications
+2. **Payment Integration** - Stripe, PayPal, and other gateways
+3. **Email Marketing** - Automated campaigns and notifications
+4. **Analytics Dashboard** - Advanced reporting and insights
+5. **Multi-language Support** - Internationalization
+6. **Advanced AI** - Machine learning for better recommendations
+7. **Social Features** - User reviews, ratings, and sharing
+8. **Inventory Automation** - Smart reordering and supplier integration
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Commit your changes: `git commit -am 'Add feature'`
-4. Push to the branch: `git push origin feature-name`
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
 5. Submit a pull request
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Support
+## 👥 Team
 
-For support and questions, please open an issue in the repository or contact the development team.
+- **Frontend Developer**: React, Vite, Modern JavaScript
+- **Backend Developer**: Node.js, Express, PostgreSQL
+- **UI/UX Designer**: Modern, accessible design system
+- **DevOps**: Deployment and infrastructure management
+
+## 📞 Support
+
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the API documentation at `/api/docs`
 
 ---
 
-**Heart & Hues** - Making every gift special! 🎁
+**Heart & Hues** - Making gift-giving magical through technology and innovation! 🎁✨

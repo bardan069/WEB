@@ -14,79 +14,57 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem('admin') === 'true');
 
   useEffect(() => {
-    // Check if user is stored in localStorage
+    // Check localStorage for user on mount
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
-        localStorage.removeItem('user');
-      }
+      setUser(JSON.parse(storedUser));
     }
     setLoading(false);
   }, []);
 
+  // Keep isAdmin in sync with localStorage
+  useEffect(() => {
+    if (isAdmin) {
+      localStorage.setItem('admin', 'true');
+    } else {
+      localStorage.removeItem('admin');
+    }
+  }, [isAdmin]);
+
+  const setAdmin = () => setIsAdmin(true);
+  const clearAdmin = () => setIsAdmin(false);
+
   const login = async (email, password) => {
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Get stored users
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find(u => u.email === email && u.password === password);
-      
-      if (!user) {
-        throw new Error('Invalid email or password');
-      }
-      
-      // Remove password from user object before storing
-      const { password: _, ...userWithoutPassword } = user;
-      setUser(userWithoutPassword);
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-      
+    // Fake login: check localStorage for users
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const foundUser = users.find(u => u.email === email && u.password === password);
+    if (foundUser) {
+      setUser(foundUser);
+      localStorage.setItem('user', JSON.stringify(foundUser));
       toast.success('Welcome back!');
       return { success: true };
-    } catch (error) {
-      const message = error.message || 'Login failed';
-      toast.error(message);
-      return { success: false, error: message };
+    } else {
+      toast.error('Invalid email or password');
+      return { success: false, error: 'Invalid email or password' };
     }
   };
 
   const signup = async (userData) => {
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Get existing users
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      
-      // Check if email already exists
-      if (users.some(u => u.email === userData.email)) {
-        throw new Error('Email already exists');
-      }
-      
-      // Create new user
-      const newUser = {
-        id: Date.now().toString(),
-        ...userData,
-        createdAt: new Date().toISOString()
-      };
-      
-      // Add to users array
-      users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
-      
-      toast.success('Account created successfully!');
-      return { success: true };
-    } catch (error) {
-      const message = error.message || 'Signup failed';
-      toast.error(message);
-      return { success: false, error: message };
+    // Fake signup: store user in localStorage
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    if (users.find(u => u.email === userData.email)) {
+      toast.error('Email already exists');
+      return { success: false, error: 'Email already exists' };
     }
+    users.push(userData);
+    localStorage.setItem('users', JSON.stringify(users));
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+    toast.success('Account created successfully!');
+    return { success: true };
   };
 
   const logout = () => {
@@ -96,30 +74,38 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (profileData) => {
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Update user data
-      const updatedUser = { ...user, ...profileData };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      
-      // Update in users array
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const userIndex = users.findIndex(u => u.id === user.id);
-      if (userIndex !== -1) {
-        users[userIndex] = { ...users[userIndex], ...profileData };
-        localStorage.setItem('users', JSON.stringify(users));
-      }
-      
-      toast.success('Profile updated successfully!');
-      return { success: true };
-    } catch (error) {
-      const message = error.message || 'Profile update failed';
-      toast.error(message);
-      return { success: false, error: message };
-    }
+    // Fake update: update user in localStorage
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    users = users.map(u => (u.email === user.email ? { ...u, ...profileData } : u));
+    localStorage.setItem('users', JSON.stringify(users));
+    setUser({ ...user, ...profileData });
+    localStorage.setItem('user', JSON.stringify({ ...user, ...profileData }));
+    toast.success('Profile updated successfully!');
+    return { success: true };
+  };
+
+  // Add admin helpers
+  const getAllUsers = () => {
+    if (!isAdmin) return [];
+    return JSON.parse(localStorage.getItem('users') || '[]');
+  };
+
+  const updateUser = (email, newData) => {
+    if (!isAdmin) return { success: false, error: 'Not authorized' };
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    users = users.map(u => (u.email === email ? { ...u, ...newData } : u));
+    localStorage.setItem('users', JSON.stringify(users));
+    toast.success('User updated successfully!');
+    return { success: true };
+  };
+
+  const deleteUser = (email) => {
+    if (!isAdmin) return { success: false, error: 'Not authorized' };
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    users = users.filter(u => u.email !== email);
+    localStorage.setItem('users', JSON.stringify(users));
+    toast.success('User deleted successfully!');
+    return { success: true };
   };
 
   const value = {
@@ -129,7 +115,13 @@ export const AuthProvider = ({ children }) => {
     signup,
     logout,
     updateProfile,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
+    isAdmin,
+    setAdmin,
+    clearAdmin,
+    getAllUsers,
+    updateUser,
+    deleteUser
   };
 
   return (

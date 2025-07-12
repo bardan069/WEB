@@ -4,4 +4,6 @@ export { default as SignupPage } from './SignupPage';
 export { default as ProductPage } from './ProductPage';
 export { default as CartPage } from './CartPage';
 export { default as ProfilePage } from './ProfilePage';
-export { default as AuthApp } from './AuthApp'; 
+export { default as AuthApp } from './AuthApp';
+export { default as AdminLoginPage } from './AdminLoginPage';
+export { default as AdminDashboard } from './AdminDashboard'; 

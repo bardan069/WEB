@@ -9,6 +9,7 @@ import Button from '../ui/Button';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const { getCartCount } = useCart();
   const navigate = useNavigate();
@@ -68,6 +69,8 @@ const Navbar = () => {
 
   const navLinksStyles = {
     display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: '30px',
     listStyle: 'none',
     margin: 0,
@@ -84,8 +87,9 @@ const Navbar = () => {
   const navButtonsStyles = {
     display: 'flex',
     alignItems: 'center',
-    gap: '20px'
-  };
+    gap: '24px', // increased gap for even spacing
+    height: '100%',
+};
 
   const cartIconStyles = {
     position: 'relative',
@@ -93,8 +97,10 @@ const Navbar = () => {
     fontSize: '20px',
     textDecoration: 'none',
     display: 'flex',
-    alignItems: 'center'
-  };
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '40px',
+};
 
   const cartCountStyles = {
     position: 'absolute',
@@ -240,36 +246,40 @@ const Navbar = () => {
                 <span style={cartCountStyles}>{getCartCount()}</span>
               )}
             </Link>
-
             {isAuthenticated ? (
               <div style={userMenuStyles}>
-                <div style={userAvatarStyles}>
+                <button
+                  style={{ ...userAvatarStyles, border: 'none', background: COLORS.primary, cursor: 'pointer' }}
+                  onClick={() => setIsUserMenuOpen((open) => !open)}
+                  aria-label="Open user menu"
+                >
                   {user?.firstName?.charAt(0) || 'U'}
-                </div>
-                <div style={dropdownMenuStyles}>
-                  <Link to="/profile" style={dropdownItemStyles}>
-                    <FaUser /> Profile
-                  </Link>
-                  <Link to="/cart" style={dropdownItemStyles}>
-                    <FaShoppingCart /> Cart
-                  </Link>
-                  <button 
-                    onClick={handleLogout} 
-                    style={{ ...dropdownItemStyles, width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
-                  >
-                    Logout
-                  </button>
-                </div>
+                </button>
+                {isUserMenuOpen && (
+                  <div style={dropdownMenuStyles}>
+                    <Link to="/profile" style={dropdownItemStyles} onClick={() => setIsUserMenuOpen(false)}>
+                      <FaUser /> Profile
+                    </Link>
+                    <button 
+                      onClick={() => { handleLogout(); setIsUserMenuOpen(false); }}
+                      style={{ ...dropdownItemStyles, width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <Button variant="outline" size="small" as={Link} to="/login">
-                  Login
-                </Button>
-                <Button variant="primary" size="small" as={Link} to="/signup">
-                  Sign Up
-                </Button>
-              </div>
+              <>
+                <Link to="/login" style={{ ...cartIconStyles, marginLeft: 20 }}>
+                  <FaUser />
+                  <span style={{ marginLeft: 6 }}>Login</span>
+                </Link>
+                <Link to="/signup" style={{ ...cartIconStyles, marginLeft: 20 }}>
+                  <FaUser />
+                  <span style={{ marginLeft: 6 }}>Sign Up</span>
+                </Link>
+              </>
             )}
 
             <button style={menuButtonStyles} className="menu-button" onClick={toggleMenu}>
