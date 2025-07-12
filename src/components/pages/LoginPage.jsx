@@ -20,7 +20,16 @@ const LoginPage = () => {
     }
     setLoading(false);
   };
-
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const result = await login(email, password);
+    if (result.success) {
+      navigate('/');
+    }
+    setLoading(false);
+  };
+     
   return (
     <>
       <style>{`
