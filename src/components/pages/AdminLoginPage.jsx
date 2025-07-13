@@ -13,7 +13,7 @@ const AdminLoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setAdmin } = useAuth();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
