@@ -22,7 +22,7 @@ const LoginPage = () => {
   };
   
      
-  return (
+ 
     <>
       <style>{`
         body {
