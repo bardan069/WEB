@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { FaShoppingCart, FaHeart } from 'react-icons/fa';
+import { FaShoppingCart, FaHeart, FaTrash, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, cart, updateQuantity, removeFromCart } = useCart();
   const { isAuthenticated } = useAuth();
+  const [showEditCart, setShowEditCart] = useState(false);
 
   const heroSlides = [
     {
@@ -392,6 +393,104 @@ const HomePage = () => {
           }
         }
       `}</style>
+
+      {/* Edit Cart Section */}
+      {cart.length > 0 && (
+        <div style={{
+          maxWidth: '900px',
+          margin: '40px auto 0',
+          background: 'white',
+          borderRadius: '15px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+          padding: '24px',
+          fontFamily: 'Segoe UI, sans-serif',
+          position: 'relative',
+          zIndex: 10
+        }}>
+          <button
+            onClick={() => setShowEditCart((v) => !v)}
+            style={{
+              background: 'linear-gradient(to right, #d47fa6, #b85c8b)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '30px',
+              padding: '12px 28px',
+              fontSize: '16px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              marginBottom: showEditCart ? 24 : 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10
+            }}
+          >
+            Edit Cart {showEditCart ? <FaChevronUp /> : <FaChevronDown />}
+          </button>
+          {showEditCart && (
+            <div>
+              {cart.map((item) => (
+                <div key={item.id} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 20,
+                  borderBottom: '1px solid #eee',
+                  padding: '16px 0'
+                }}>
+                  <img src={item.image} alt={item.name} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, fontSize: 16 }}>{item.name}</div>
+                    <div style={{ color: '#c94f7c', fontWeight: 500 }}>{item.price}</div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <button
+                      style={{ width: 28, height: 28, border: '1px solid #ddd', background: 'white', borderRadius: 5, cursor: 'pointer' }}
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    >-</button>
+                    <input
+                      type="number"
+                      value={item.quantity}
+                      min={1}
+                      style={{ width: 40, textAlign: 'center', border: '1px solid #ddd', borderRadius: 5, padding: 4 }}
+                      onChange={e => updateQuantity(item.id, parseInt(e.target.value) || 1)}
+                    />
+                    <button
+                      style={{ width: 28, height: 28, border: '1px solid #ddd', background: 'white', borderRadius: 5, cursor: 'pointer' }}
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    >+</button>
+                  </div>
+                  <button
+                    style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', fontSize: 18, marginLeft: 10 }}
+                    onClick={() => removeFromCart(item.id)}
+                    title="Remove"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() => navigate('/cart')}
+                style={{
+                  marginTop: 24,
+                  background: 'linear-gradient(to right, #d47fa6, #b85c8b)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '30px',
+                  padding: '12px 28px',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'block',
+                  marginLeft: 'auto',
+                  marginRight: 'auto'
+                }}
+              >
+                View Cart
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {/* End Edit Cart Section */}
 
       <section className="hero-section">
         {heroSlides.map((slide, index) => (

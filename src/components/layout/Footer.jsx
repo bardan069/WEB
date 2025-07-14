@@ -162,24 +162,6 @@ const Footer = () => {
             ))}
           </ul>
         </div>
-        
-        <div style={footerSectionStyles}>
-          <h4 style={footerHeadingStyles}>Newsletter</h4>
-          <p style={footerDescriptionStyles}>
-            Stay updated with our latest gifts and special offers.
-          </p>
-          <form style={newsletterFormStyles} onSubmit={handleNewsletterSubmit}>
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              fullWidth
-              required
-            />
-            <Button type="submit" size="small">
-              Subscribe
-            </Button>
-          </form>
-        </div>
       </div>
       
       <div style={footerBottomStyles}>
