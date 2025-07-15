@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('admin') === 'true');
 
   useEffect(() => {
+    // Check localStorage for user on mount
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
