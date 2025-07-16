@@ -112,7 +112,7 @@ const HomePage = () => {
   const isFavorite = (product) => favorites.some((item) => item.id === product.id);
   const isInCart = (product) => cart.some((item) => item.id === product.id);
 
-  // Make favorites available globally for navbar
+ 
   window.__FAVORITES_COUNT__ = favorites.length;
 
   return (
