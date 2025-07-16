@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import toast from 'react-hot-toast';
+import { FaEnvelope, FaLock, FaSignInAlt, FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,282 +20,69 @@ const LoginPage = () => {
     }
     setLoading(false);
   };
-  
-     
+
   return (
-    <>
-      <style>{`
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: 'Segoe UI', sans-serif;
-          background: linear-gradient(to right, #fbeaec, #fff0f5);
-        }
-
-        .login-wrapper {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          padding: 20px;
-        }
-
-        .login-box {
-          display: flex;
-          background: #fff;
-          border-radius: 20px;
-          overflow: hidden;
-          max-width: 950px;
-          width: 100%;
-          box-shadow: 0 12px 40px rgba(223, 182, 203, 0.25);
-        }
-
-        .login-form-container {
-          flex: 1;
-          padding: 40px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-
-        .login-brand {
-          font-size: 22px;
-          font-weight: bold;
-          color: #c94f7c;
-          margin-bottom: 12px;
-        }
-
-        .login-heading {
-          font-size: 26px;
-          font-weight: 600;
-          margin-bottom: 8px;
-          color: #2c2c2c;
-        }
-
-        .login-subtext {
-          font-size: 13px;
-          color: #777;
-          margin-bottom: 24px;
-        }
-
-        .google-login {
-          border: 1px solid #ccc;
-          border-radius: 30px;
-          padding: 10px 20px;
-          text-align: center;
-          cursor: pointer;
-          font-size: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          margin-bottom: 16px;
-          background: #fff;
-          transition: all 0.3s ease;
-        }
-
-        .google-login:hover {
-          background: #fce4ec;
-        }
-
-        .divider {
-          text-align: center;
-          font-size: 12px;
-          color: #aaa;
-          margin: 16px 0;
-        }
-
-        .input-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          margin-bottom: 16px;
-        }
-
-        .input-label {
-          font-size: 13px;
-          color: #444;
-        }
-
-        .form-input {
-          padding: 10px 14px;
-          border: 1px solid #ccc;
-          border-radius: 30px;
-          font-size: 14px;
-          outline: none;
-        }
-
-        .form-input:focus {
-          border-color: #d47fa6;
-        }
-
-        .password-toggle-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-size: 14px;
-          color: #888;
-        }
-
-        .options-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 13px;
-          margin-bottom: 20px;
-        }
-
-        .login-button {
-          background: linear-gradient(to right, #d47fa6, #b85c8b);
-          color: white;
-          border: none;
-          padding: 12px;
-          border-radius: 30px;
-          font-size: 15px;
-          font-weight: bold;
-          cursor: pointer;
-          transition: background 0.3s ease;
-        }
-
-        .login-button:hover:not(:disabled) {
-          background: linear-gradient(to right, #c86a99, #a64a78);
-        }
-
-        .login-button:disabled {
-          background: #ccc;
-          cursor: not-allowed;
-        }
-
-        .login-image {
-          flex: 1;
-          background: url('/download.jpeg') no-repeat center center;
-          background-size: cover;
-        }
-
-        .signup-link {
-          text-align: center;
-          font-size: 13px;
-          color: #777;
-          margin-top: 20px;
-        }
-
-        .signup-link a {
-          color: #b85c8b;
-          text-decoration: none;
-          font-weight: 500;
-        }
-
-        .signup-link a:hover {
-          text-decoration: underline;
-        }
-
-        .admin-login-option {
-          background: white !important;
-          color: #b85c8b !important;
-          border: 2px solid #b85c8b !important;
-        }
-        .admin-login-option:hover {
-          background: #fbeaec !important;
-        }
-
-        @media (max-width: 768px) {
-          .login-box {
-            flex-direction: column;
-            border-radius: 0;
-          }
-
-          .login-image {
-            height: 220px;
-          }
-        }
-      `}</style>
-
-      <div className="login-wrapper">
-        <div className="login-box">
-          <div className="login-form-container">
-            <div className="login-brand">HEART & HUES</div>
-            <h2 className="login-heading">Login</h2>
-            <p className="login-subtext">Choose a gift for any occasion 🎁</p>
-
-            <div className="google-login">
-              <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google" />
-              Sign in with Google
-            </div>
-
-            <div className="divider">OR</div>
-
-            <form onSubmit={handleSubmit}>
-              <div className="input-group">
-                <label className="input-label">Email</label>
-                <input
-                  type="email"
-                  className="form-input"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="input-group">
-                <label className="input-label">Password</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    className="form-input"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }}
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? 'Hide' : 'Show'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="options-row">
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" />
-                  Remember me
-                </label>
-                <a href="#" style={{ color: '#b85c8b', textDecoration: 'none' }}>
-                  Forgot password?
-                </a>
-              </div>
-
-              <button 
-                type="submit" 
-                className="login-button"
-                disabled={loading}
-              >
-                {loading ? 'Signing in...' : 'Sign In'}
-              </button>
-              <button
-                type="button"
-                className="login-button admin-login-option"
-                style={{ marginTop: 12, background: 'white', color: '#b85c8b', border: '2px solid #b85c8b' }}
-                onClick={() => navigate('/admin-login')}
-              >
-                Login as Admin
-              </button>
-            </form>
-
-            <div className="signup-link">
-              Don't have an account? <Link to="/signup">Sign up</Link>
-            </div>
+    <div style={{
+      minHeight: '100vh',
+      height: '100vh',
+      width: '100vw',
+      overflow: 'hidden',
+      background: 'linear-gradient(120deg, #fbeaec 0%, #f7e1f3 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    }}>
+      {/* Creative background shapes */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: 60, left: 80, width: 120, height: 120, background: 'radial-gradient(circle at 30% 30%, #c94f7c 60%, #fff0f5 100%)', borderRadius: '50%', opacity: 0.13, filter: 'blur(2px)' }} />
+        <div style={{ position: 'absolute', top: 180, right: 120, width: 90, height: 90, background: 'radial-gradient(circle at 70% 70%, #b85c8b 60%, #fff0f5 100%)', borderRadius: '50%', opacity: 0.10, filter: 'blur(2px)' }} />
+        <div style={{ position: 'absolute', bottom: 60, left: 200, width: 70, height: 70, background: 'radial-gradient(circle at 50% 50%, #d47fa6 60%, #fff0f5 100%)', borderRadius: '50%', opacity: 0.09, filter: 'blur(2px)' }} />
+      </div>
+      <div style={{
+        maxWidth: 420,
+        width: '100%',
+        background: 'rgba(255,255,255,0.55)',
+        borderRadius: 22,
+        boxShadow: '0 8px 32px rgba(201,79,124,0.13)',
+        padding: 48,
+        fontFamily: 'Segoe UI, sans-serif',
+        position: 'relative',
+        zIndex: 1,
+        backdropFilter: 'blur(16px)',
+        border: '1.5px solid #fbeaec',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, gap: 10 }}>
+          <FaUser style={{ color: '#c94f7c', fontSize: 32 }} />
+          <h2 style={{ color: '#c94f7c', fontWeight: 700, fontSize: 28, margin: 0 }}>User Login</h2>
+        </div>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+          <div style={{ position: 'relative' }}>
+            <FaEnvelope style={{ position: 'absolute', left: 12, top: 13, color: '#c94f7c' }} />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="Email" style={{ width: '100%', padding: '12px 44px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: '#b8aeb8', color: '#fff', backdropFilter: 'blur(2px)' }} />
           </div>
-
-          <div className="login-image"></div>
+          <div style={{ position: 'relative' }}>
+            <FaLock style={{ position: 'absolute', left: 12, top: 13, color: '#c94f7c' }} />
+            <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required placeholder="Password" style={{ width: '100%', padding: '12px 44px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: '#fff', color: '#2c3e50', backdropFilter: 'blur(2px)' }} />
+            <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: 'absolute', right: 10, top: 10, background: 'none', border: 'none', cursor: 'pointer', color: '#c94f7c', fontSize: 20, padding: 0 }} tabIndex={-1} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          <button type="submit" style={{ width: '100%', background: 'linear-gradient(90deg, #c94f7c 0%, #b85c8b 100%)', color: 'white', border: 'none', borderRadius: 10, padding: '14px 0', fontWeight: 700, fontSize: 18, boxShadow: '0 2px 8px #fbeaec', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 6, transition: 'background 0.2s' }} disabled={loading}>
+            {loading ? 'Logging in...' : <><FaSignInAlt style={{ fontSize: 20 }} /> Login</>}
+          </button>
+        </form>
+        <div style={{ marginTop: 22, textAlign: 'center' }}>
+          <span style={{ color: '#888' }}>Don't have an account? </span>
+          <Link to="/signup" style={{ color: '#b85c8b', fontWeight: 600, textDecoration: 'none' }}>Sign up</Link>
+        </div>
+        <div style={{ marginTop: 18, textAlign: 'center' }}>
+          <span style={{ color: '#888' }}>Admin? </span>
+          <Link to="/admin-login" style={{ color: '#b85c8b', fontWeight: 600, textDecoration: 'none' }}>Login as Admin</Link>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default LoginPage;
+export default LoginPage; 

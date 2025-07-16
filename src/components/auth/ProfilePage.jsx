@@ -30,6 +30,10 @@ const ProfilePage = () => {
         </div>
       </div>
       <hr style={{ margin: '32px 0' }} />
+      <h3 style={{ color: '#b85c8b', marginBottom: 16 }}>Order History</h3>
+      <div style={{ color: '#888', fontStyle: 'italic', marginBottom: 32 }}>
+        (Order history will appear here.)
+      </div>
       <button
         onClick={logout}
         style={{ background: 'linear-gradient(to right, #d47fa6, #b85c8b)', color: 'white', border: 'none', padding: '12px 32px', borderRadius: 30, fontSize: 16, fontWeight: 600, cursor: 'pointer' }}

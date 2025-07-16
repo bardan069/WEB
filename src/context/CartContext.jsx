@@ -15,7 +15,6 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
@@ -27,7 +26,6 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
@@ -35,7 +33,6 @@ export const CartProvider = ({ children }) => {
   const addToCart = (product, quantity = 1) => {
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id);
-      
       if (existingItem) {
         const updatedCart = prevCart.map(item =>
           item.id === product.id
@@ -68,7 +65,6 @@ export const CartProvider = ({ children }) => {
       removeFromCart(productId);
       return;
     }
-
     setCart(prevCart =>
       prevCart.map(item =>
         item.id === productId
@@ -97,16 +93,12 @@ export const CartProvider = ({ children }) => {
   const checkout = async (shippingInfo) => {
     setLoading(true);
     try {
-      // This would integrate with your backend
       const orderData = {
         items: cart,
         total: getCartTotal(),
         shipping: shippingInfo
       };
-      
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
       clearCart();
       toast.success('Order placed successfully!');
       return { success: true };

@@ -1,343 +1,213 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaShoppingCart, FaUser, FaBars, FaTimes } from 'react-icons/fa';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaShoppingCart, FaUserCircle, FaHeart, FaMagic, FaTags, FaSignInAlt } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
-import { NAVIGATION_LINKS } from '../../constants/data';
-import { COLORS } from '../../constants/colors';
-import Button from '../ui/Button';
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { user, isAuthenticated, logout } = useAuth();
   const { getCartCount } = useCart();
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [productsActive, setProductsActive] = useState(false);
+  const [favoritesCount, setFavoritesCount] = useState(window.__FAVORITES_COUNT__ || 0);
 
-  const handleLogout = () => {
-    logout();
-    setIsMenuOpen(false);
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFavoritesCount(window.__FAVORITES_COUNT__ || 0);
+    }, 300);
+    return () => clearInterval(interval);
+  }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleSectionLink = (hash) => {
-    const sectionId = hash.replace('#', '');
-    if (location.pathname !== '/') {
+  const handleProductsClick = (e) => {
+    e.preventDefault();
+    setProductsActive(true);
+    if (location.pathname === '/') {
+      const section = document.getElementById('products');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
       navigate('/', { replace: false });
       setTimeout(() => {
-        const el = document.getElementById(sectionId);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
+        const section = document.getElementById('products');
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 400);
+    }
+    setTimeout(() => setProductsActive(false), 1200);
+  };
+
+  const handleHomeClick = (e) => {
+    if (location.pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleAboutClick = (e) => {
+    e.preventDefault();
+    if (location.pathname === '/') {
+      const footer = document.getElementById('footer');
+      if (footer) {
+        footer.scrollIntoView({ behavior: 'smooth' });
+      }
     } else {
-      const el = document.getElementById(sectionId);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      navigate('/', { replace: false });
+      setTimeout(() => {
+        const footer = document.getElementById('footer');
+        if (footer) {
+          footer.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 400);
     }
-    setIsMenuOpen(false);
   };
 
-  const navbarStyles = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    background: 'rgba(255, 255, 255, 0.95)',
-    backdropFilter: 'blur(10px)',
-    padding: '15px 0',
-    zIndex: 1000,
-    boxShadow: `0 2px 20px ${COLORS.shadowLight}`
-  };
-
-  const containerStyles = {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '0 20px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  };
-
-  const brandStyles = {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: COLORS.primary,
-    textDecoration: 'none'
-  };
-
-  const navLinksStyles = {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: '30px',
-    listStyle: 'none',
-    margin: 0,
-    padding: 0
-  };
-
-  const navLinkStyles = {
-    textDecoration: 'none',
-    color: COLORS.textPrimary,
-    fontWeight: 500,
-    transition: 'color 0.3s ease'
-  };
-
-  const navButtonsStyles = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '24px', // increased gap for even spacing
-    height: '100%',
-};
-
-  const cartIconStyles = {
-    position: 'relative',
-    color: COLORS.primary,
-    fontSize: '20px',
-    textDecoration: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '40px',
-};
-
-  const cartCountStyles = {
-    position: 'absolute',
-    top: '-8px',
-    right: '-8px',
-    background: COLORS.primary,
-    color: COLORS.white,
-    borderRadius: '50%',
-    width: '20px',
-    height: '20px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '12px',
-    fontWeight: 'bold'
-  };
-
-  const userMenuStyles = {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center'
-  };
-
-  const userAvatarStyles = {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    background: COLORS.primary,
-    color: COLORS.white,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    fontSize: '16px'
-  };
-
-  const dropdownMenuStyles = {
-    position: 'absolute',
-    top: '100%',
-    right: 0,
-    background: COLORS.white,
-    borderRadius: '12px',
-    boxShadow: `0 4px 20px ${COLORS.shadow}`,
-    padding: '12px 0',
-    minWidth: '180px',
-    zIndex: 1001,
-    marginTop: '8px'
-  };
-
-  const dropdownItemStyles = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    padding: '12px 20px',
-    color: COLORS.textPrimary,
-    textDecoration: 'none',
-    transition: 'background-color 0.3s ease',
-    fontSize: '14px'
-  };
-
-  const mobileMenuStyles = {
-    position: 'fixed',
-    top: '70px',
-    left: 0,
-    right: 0,
-    background: COLORS.white,
-    boxShadow: `0 4px 20px ${COLORS.shadow}`,
-    padding: '20px',
-    zIndex: 999,
-    transform: isMenuOpen ? 'translateY(0)' : 'translateY(-100%)',
-    transition: 'transform 0.3s ease'
-  };
-
-  const mobileNavLinksStyles = {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px'
-  };
-
-  const mobileNavLinkStyles = {
-    textDecoration: 'none',
-    color: COLORS.textPrimary,
-    fontSize: '18px',
-    fontWeight: 500,
-    padding: '12px 0',
-    borderBottom: `1px solid ${COLORS.borderLight}`
-  };
-
-  const menuButtonStyles = {
-    background: 'none',
-    border: 'none',
-    fontSize: '24px',
-    color: COLORS.primary,
-    cursor: 'pointer',
-    display: 'none'
-  };
-
-  // Add responsive styles for mobile
-  const responsiveStyles = `
-    @media (max-width: 768px) {
-      .desktop-nav {
-        display: none !important;
-      }
-      
-      .menu-button {
-        display: block !important;
-      }
-    }
-  `;
+  const isHomeActive = location.pathname === '/' && !productsActive;
+  const isProductsActive = productsActive;
 
   return (
-    <>
-      <style>{responsiveStyles}</style>
-      <nav style={navbarStyles}>
-        <div style={containerStyles}>
-          <Link to="/" style={brandStyles}>HEART & HUES</Link>
-          
-          <ul style={navLinksStyles} className="desktop-nav">
-            {NAVIGATION_LINKS.map((link) => (
-              <li key={link.name}>
-                {link.path.startsWith('#') ? (
-                  <button
-                    style={{ ...navLinkStyles, background: 'none', border: 'none', cursor: 'pointer' }}
-                    onClick={() => handleSectionLink(link.path)}
-                  >
-                    {link.name}
-                  </button>
-                ) : (
-                  <Link to={link.path} style={navLinkStyles}>{link.name}</Link>
-                )}
-              </li>
-            ))}
-          </ul>
-
-          <div style={navButtonsStyles}>
-            <Link to="/cart" style={cartIconStyles}>
-              <FaShoppingCart />
-              {getCartCount() > 0 && (
-                <span style={cartCountStyles}>{getCartCount()}</span>
-              )}
-            </Link>
-            {isAuthenticated ? (
-              <div style={userMenuStyles}>
-                <button
-                  style={{ ...userAvatarStyles, border: 'none', background: COLORS.primary, cursor: 'pointer' }}
-                  onClick={() => setIsUserMenuOpen((open) => !open)}
-                  aria-label="Open user menu"
-                >
-                  {user?.firstName?.charAt(0) || 'U'}
-                </button>
-                {isUserMenuOpen && (
-                  <div style={dropdownMenuStyles}>
-                    <Link to="/profile" style={dropdownItemStyles} onClick={() => setIsUserMenuOpen(false)}>
-                      <FaUser /> Profile
-                    </Link>
-                    <button 
-                      onClick={() => { handleLogout(); setIsUserMenuOpen(false); }}
-                      style={{ ...dropdownItemStyles, width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <>
-                <Link to="/login" style={{ ...cartIconStyles, marginLeft: 20 }}>
-                  <FaUser />
-                  <span style={{ marginLeft: 6 }}>Login</span>
-                </Link>
-                <Link to="/signup" style={{ ...cartIconStyles, marginLeft: 20 }}>
-                  <FaUser />
-                  <span style={{ marginLeft: 6 }}>Sign Up</span>
-                </Link>
-              </>
+    <nav style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      background: '#fff',
+      boxShadow: '0 2px 20px rgba(201,79,124,0.08)',
+      zIndex: 1000,
+      padding: '0 0',
+    }}>
+      <div style={{
+        maxWidth: 1200,
+        margin: '0 auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: 70,
+        padding: '0 24px',
+      }}>
+        <Link to="/" style={{ fontWeight: 700, fontSize: 26, color: '#c94f7c', textDecoration: 'none', letterSpacing: 1 }}>
+          Heart & Hues
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+          <Link
+            to="/"
+            onClick={handleHomeClick}
+            style={{
+              color: isHomeActive ? '#b85c8b' : '#2c3e50',
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: 'none',
+              padding: '6px 0',
+              borderBottom: isHomeActive ? '2.5px solid #c94f7c' : '2.5px solid transparent',
+              transition: 'color 0.2s, border 0.2s',
+            }}
+          >
+            Home
+          </Link>
+          <Link
+            to="/"
+            onClick={handleProductsClick}
+            style={{
+              color: isProductsActive ? '#b85c8b' : '#2c3e50',
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: 'none',
+              padding: '6px 0',
+              borderBottom: isProductsActive ? '2.5px solid #c94f7c' : '2.5px solid transparent',
+              transition: 'color 0.2s, border 0.2s',
+            }}
+          >
+            Products
+          </Link>
+          <Link
+            to="/favorites"
+            style={{
+              color: '#b85c8b',
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: 'none',
+              padding: '6px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              borderBottom: '2.5px solid transparent',
+              transition: 'color 0.2s, border 0.2s',
+            }}
+          >
+            <FaHeart style={{ fontSize: 18 }} /> Favorites
+            {favoritesCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: -7,
+                right: -12,
+                background: '#b85c8b',
+                color: 'white',
+                borderRadius: '50%',
+                fontSize: 13,
+                fontWeight: 600,
+                padding: '2px 7px',
+                minWidth: 20,
+                textAlign: 'center',
+              }}>{favoritesCount}</span>
             )}
-
-            <button style={menuButtonStyles} className="menu-button" onClick={toggleMenu}>
-              {isMenuOpen ? <FaTimes /> : <FaBars />}
-            </button>
-          </div>
+          </Link>
+          <Link
+            to="/about"
+            onClick={handleAboutClick}
+            style={{
+              color: location.pathname === '/about' ? '#b85c8b' : '#2c3e50',
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: 'none',
+              padding: '6px 0',
+              borderBottom: location.pathname === '/about' ? '2.5px solid #c94f7c' : '2.5px solid transparent',
+              transition: 'color 0.2s, border 0.2s',
+            }}
+          >
+            About
+          </Link>
+          <Link to="/cart" style={{ position: 'relative', color: '#c94f7c', fontSize: 22 }}>
+            <FaShoppingCart />
+            {getCartCount() > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: -7,
+                right: -12,
+                background: '#b85c8b',
+                color: 'white',
+                borderRadius: '50%',
+                fontSize: 13,
+                fontWeight: 600,
+                padding: '2px 7px',
+                minWidth: 20,
+                textAlign: 'center',
+              }}>{getCartCount()}</span>
+            )}
+          </Link>
+          <Link to="/login" style={{
+            background: 'linear-gradient(90deg, #c94f7c, #b85c8b)',
+            color: 'white',
+            border: 'none',
+            borderRadius: 22,
+            padding: '7px 22px',
+            fontWeight: 700,
+            fontSize: 16,
+            marginLeft: 8,
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            boxShadow: '0 2px 8px #fbeaec',
+            transition: 'background 0.2s',
+          }}>
+            <FaSignInAlt style={{ fontSize: 18 }} /> Login
+          </Link>
+          <Link to="/profile" style={{ color: '#b85c8b', fontSize: 24, marginLeft: 8 }}>
+            <FaUserCircle />
+          </Link>
         </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      <div style={mobileMenuStyles}>
-        <ul style={mobileNavLinksStyles}>
-          {NAVIGATION_LINKS.map((link) => (
-            <li key={link.name}>
-              {link.path.startsWith('#') ? (
-                <button
-                  style={{ ...mobileNavLinkStyles, background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
-                  onClick={() => handleSectionLink(link.path)}
-                >
-                  {link.name}
-                </button>
-              ) : (
-                <Link 
-                  to={link.path} 
-                  style={mobileNavLinkStyles}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              )}
-            </li>
-          ))}
-          
-          {!isAuthenticated && (
-            <>
-              <li>
-                <Link 
-                  to="/login" 
-                  style={mobileNavLinkStyles}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/signup" 
-                  style={mobileNavLinkStyles}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign Up
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
       </div>
-    </>
+    </nav>
   );
 };
 

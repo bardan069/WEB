@@ -13,7 +13,9 @@ import {
   ProfilePage, 
   AuthApp, 
   AdminLoginPage, 
-  AdminDashboard 
+  AdminDashboard,
+  FavoritesPage,
+  CheckoutPage
 } from './components/pages';
 
 // PrivateRoute component for protecting routes
@@ -53,6 +55,7 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/products/:id" element={<ProductPage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/profile" element={
                 <PrivateRoute>
                   <ProfilePage />
@@ -65,6 +68,7 @@ function App() {
                   <AdminDashboard />
                 </AdminRoute>
               } />
+              <Route path="/favorites" element={<FavoritesPage />} />
             </Routes>
           </Layout>
         </Router>

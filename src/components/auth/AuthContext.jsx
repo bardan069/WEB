@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('admin') === 'true');
 
   useEffect(() => {
+    // Check localStorage for user on mount
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  // Keep isAdmin in sync with localStorage
   useEffect(() => {
     if (isAdmin) {
       localStorage.setItem('admin', 'true');
@@ -36,6 +38,7 @@ export const AuthProvider = ({ children }) => {
   const clearAdmin = () => setIsAdmin(false);
 
   const login = async (email, password) => {
+    // Fake login: check localStorage for users
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     const foundUser = users.find(u => u.email === email && u.password === password);
     if (foundUser) {
@@ -50,6 +53,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (userData) => {
+    // Fake signup: store user in localStorage
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     if (users.find(u => u.email === userData.email)) {
       toast.error('Email already exists');
@@ -70,6 +74,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (profileData) => {
+    // Fake update: update user in localStorage
     let users = JSON.parse(localStorage.getItem('users') || '[]');
     users = users.map(u => (u.email === user.email ? { ...u, ...profileData } : u));
     localStorage.setItem('users', JSON.stringify(users));
@@ -79,6 +84,7 @@ export const AuthProvider = ({ children }) => {
     return { success: true };
   };
 
+  // Add admin helpers
   const getAllUsers = () => {
     if (!isAdmin) return [];
     return JSON.parse(localStorage.getItem('users') || '[]');

@@ -2,25 +2,14 @@ import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-const Layout = ({ children, showFooter = true }) => {
-  const layoutStyles = {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column'
-  };
-
-  const mainStyles = {
-    flex: 1,
-    paddingTop: '70px' // Account for fixed navbar
-  };
-
+const Layout = ({ children }) => {
   return (
-    <div style={layoutStyles}>
+    <div style={{ minHeight: '100vh', background: '#f7f7f7', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      <main style={mainStyles}>
+      <main style={{ flex: 1, maxWidth: 1200, margin: '100px auto 0', padding: '32px 16px', background: 'white', borderRadius: 18, boxShadow: '0 6px 32px rgba(201,79,124,0.10)' }}>
         {children}
       </main>
-      {showFooter && <Footer />}
+      <Footer />
     </div>
   );
 };
