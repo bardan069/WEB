@@ -15,7 +15,9 @@ import {
   AdminLoginPage, 
   AdminDashboard,
   FavoritesPage,
-  CheckoutPage
+  CheckoutPage,
+  OrderListPage,
+  OrderDetailsPage
 } from './components/pages';
 
 // PrivateRoute component for protecting routes
@@ -69,6 +71,8 @@ function App() {
                 </AdminRoute>
               } />
               <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/orders" element={<OrderListPage />} />
+              <Route path="/orders/:id" element={<OrderDetailsPage />} />
             </Routes>
           </Layout>
         </Router>

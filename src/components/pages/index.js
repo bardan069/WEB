@@ -8,4 +8,6 @@ export { default as AuthApp } from './AuthApp.jsx';
 export { default as AdminLoginPage } from './AdminLoginPage.jsx';
 export { default as AdminDashboard } from './AdminDashboard.jsx';
 export { default as FavoritesPage } from './FavoritesPage.jsx';
-export { default as CheckoutPage } from './CheckoutPage.jsx'; 
+export { default as CheckoutPage } from './CheckoutPage.jsx';
+export { default as OrderListPage } from './OrderListPage.jsx';
+export { default as OrderDetailsPage } from './OrderDetailsPage.jsx'; 

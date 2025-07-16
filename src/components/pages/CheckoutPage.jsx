@@ -21,11 +21,27 @@ const CheckoutPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    try {
+      // Prepare order data
+      const orderData = {
+        user: null, // Replace with user ID if available from auth context
+        products: cart.map(item => ({ product: item.id, quantity: item.quantity })),
+        total: getCartTotal()
+      };
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+      if (!res.ok) throw new Error('Order creation failed');
+      // Optionally, you can get the created order: const order = await res.json();
       clearCart();
       setLoading(false);
-      navigate('/', { state: { paymentSuccess: true } });
-    }, 1200);
+      navigate('/orders');
+    } catch (err) {
+      setLoading(false);
+      alert(err.message);
+    }
   };
 
   return (

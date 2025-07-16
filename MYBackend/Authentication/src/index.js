@@ -8,6 +8,7 @@ import { authenticateToken } from "./middleware/token-middleware.js";
 import router from "./route/uploadRoutes.js";
 import { createUploadsFolder } from "./security/helper.js";
 import { productRouter } from "./route/index.js";
+import { orderRouter } from "./route/index.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/file", router);
 app.use("/api/products", productRouter);
+app.use("/api/orders", orderRouter);
 createUploadsFolder();
 app.listen(4000, function () {
   console.log("project running in port ");
