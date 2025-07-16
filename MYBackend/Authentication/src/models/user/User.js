@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../database/index.js";
+import { Role } from "./Role.js";
 
 
 export const User=sequelize.define("User",{
@@ -20,3 +21,5 @@ export const User=sequelize.define("User",{
         type:DataTypes.STRING
       }
 })
+
+User.belongsTo(Role, { foreignKey: 'roleId' });

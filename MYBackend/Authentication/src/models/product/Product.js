@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../database/index.js";
+import { Category } from "../category/Category.js";
 
 export const Product = sequelize.define("Product", {
   id: {
@@ -23,4 +24,6 @@ export const Product = sequelize.define("Product", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-}); 
+});
+
+Product.belongsTo(Category, { foreignKey: 'categoryId' }); 
