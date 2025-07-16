@@ -9,6 +9,7 @@ import router from "./route/uploadRoutes.js";
 import { createUploadsFolder } from "./security/helper.js";
 import { productRouter } from "./route/index.js";
 import { orderRouter } from "./route/index.js";
+import { categoryRouter, favoriteRouter, adminRouter } from "./route/index.js";
 
 dotenv.config();
 
@@ -22,6 +23,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/file", router);
 app.use("/api/products", productRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/categories", categoryRouter);
+app.use("/api/favorites", favoriteRouter);
+app.use("/api/admin", adminRouter);
 createUploadsFolder();
 app.listen(4000, function () {
   console.log("project running in port ");
