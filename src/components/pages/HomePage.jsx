@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import StylishFooter from '../layout/StylishFooter';
-import { FaHeart, FaShoppingCart } from 'react-icons/fa';
+import { FaHeart, FaShoppingCart, FaStar } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 
 const specialOccasionProducts = [
@@ -317,39 +317,43 @@ const HomePage = () => {
                 />
                 <div style={{ color: '#c94f7c', fontWeight: 700, fontSize: 20, marginBottom: 6 }}>{product.name}</div>
                 <div style={{ color: '#b85c8b', fontWeight: 600, fontSize: 18, marginBottom: 8 }}>{product.price}</div>
-                <div style={{ color: '#888', fontSize: 15, marginBottom: 12 }}>Rating: {avgRating} <span style={{ color: '#c94f7c', fontWeight: 700 }}>★</span> ({productFeedback.length || 'No'} review{productFeedback.length === 1 ? '' : 's'})</div>
+                <div style={{ color: '#888', fontSize: 15, marginBottom: 12 }}>
+                  Rating: <span style={{ color: '#c94f7c', fontWeight: 700, fontSize: 18 }}>{avgRating}</span> <FaStar style={{ color: '#ffd700', marginBottom: -2 }} />
+                  <span style={{ color: '#b85c8b', fontWeight: 600, marginLeft: 6 }}>({productFeedback.length || 'No'} review{productFeedback.length === 1 ? '' : 's'})</span>
+                </div>
                 {/* Comments/Rating Section */}
-                <div style={{ marginTop: 18, textAlign: 'left' }}>
-                  <form onSubmit={e => handleCommentSubmit(product.id, e)} style={{ marginBottom: 10, background: '#fbeaec22', borderRadius: 10, padding: 8 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                <div style={{ marginTop: 18, textAlign: 'left', background: '#fbeaec22', borderRadius: 12, padding: 12, boxShadow: '0 1px 6px #fbeaec33', minHeight: 60 }}>
+                  <form onSubmit={e => handleCommentSubmit(product.id, e)} style={{ marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8, background: '#fff', borderRadius: 8, padding: 8, boxShadow: '0 1px 4px #fbeaec22' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                       <input
                         type="number"
                         min={1}
                         max={5}
                         value={(commentInputs[product.id]?.rating) ?? 5}
                         onChange={e => handleCommentInput(product.id, 'rating', e.target.value)}
-                        style={{ width: 48, borderRadius: 6, border: '1px solid #e9b6d0', padding: '4px 8px', fontSize: 15, color: '#c94f7c' }}
+                        style={{ width: 40, borderRadius: 6, border: '1px solid #e9b6d0', padding: '4px 6px', fontSize: 15, color: '#c94f7c', textAlign: 'center', fontWeight: 700 }}
                         required
                         title="Rate 1-5"
                       />
-                      <span style={{ color: '#c94f7c', fontWeight: 700 }}>★</span>
-                      <input
-                        type="text"
-                        placeholder="Add a comment..."
-                        value={commentInputs[product.id]?.comment || ''}
-                        onChange={e => handleCommentInput(product.id, 'comment', e.target.value)}
-                        style={{ flex: 1, borderRadius: 6, border: '1px solid #e9b6d0', padding: '4px 8px', fontSize: 15, color: '#b85c8b' }}
-                        required
-                      />
-                      <button type="submit" style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 6, padding: '6px 14px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>Post</button>
+                      <FaStar style={{ color: '#ffd700', fontSize: 18, marginLeft: 2 }} />
                     </div>
+                    <input
+                      type="text"
+                      placeholder="Add a comment..."
+                      value={commentInputs[product.id]?.comment || ''}
+                      onChange={e => handleCommentInput(product.id, 'comment', e.target.value)}
+                      style={{ flex: 1, borderRadius: 6, border: '1.5px solid #e9b6d0', padding: '6px 10px', fontSize: 15, color: '#b85c8b', background: '#fff8fa' }}
+                      required
+                    />
+                    <button type="submit" style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 6, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer', boxShadow: '0 1px 4px #fbeaec22' }}>Post</button>
                   </form>
-                  <div style={{ maxHeight: 80, overflowY: 'auto', fontSize: 14 }}>
-                    {productFeedback.length === 0 && <div style={{ color: '#aaa' }}>No comments yet.</div>}
+                  <div style={{ maxHeight: 90, overflowY: 'auto', fontSize: 15, paddingRight: 2 }}>
+                    {productFeedback.length === 0 && <div style={{ color: '#aaa', fontStyle: 'italic', textAlign: 'center', padding: 8 }}>No comments yet.</div>}
                     {productFeedback.map((fb, idx) => (
-                      <div key={idx} style={{ marginBottom: 6, background: '#fff8fa', borderRadius: 6, padding: '6px 8px', color: '#b85c8b' }}>
-                        <span style={{ color: '#c94f7c', fontWeight: 700 }}>{fb.rating}★</span> {fb.comment}
-                        <span style={{ color: '#aaa', fontSize: 12, marginLeft: 6 }}>{new Date(fb.date).toLocaleDateString()}</span>
+                      <div key={idx} style={{ marginBottom: 8, background: '#fff', borderRadius: 8, padding: '8px 10px', color: '#b85c8b', boxShadow: '0 1px 4px #fbeaec22', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ color: '#ffd700', fontWeight: 700, fontSize: 16, display: 'flex', alignItems: 'center', gap: 2 }}><FaStar style={{ color: '#ffd700', fontSize: 15 }} /> {fb.rating}</span>
+                        <span style={{ flex: 1 }}>{fb.comment}</span>
+                        <span style={{ color: '#aaa', fontSize: 12, marginLeft: 6, whiteSpace: 'nowrap' }}>{new Date(fb.date).toLocaleDateString()}</span>
                       </div>
                     ))}
                   </div>
