@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaUserCircle, FaHeart, FaMagic, FaTags, FaSignInAlt } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const { getCartCount } = useCart();
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [productsActive, setProductsActive] = useState(false);
@@ -196,24 +198,26 @@ const Navbar = () => {
               }}>{getCartCount()}</span>
             )}
           </Link>
-          <Link to="/login" style={{
-            background: 'linear-gradient(90deg, #c94f7c, #b85c8b)',
-            color: 'white',
-            border: 'none',
-            borderRadius: 22,
-            padding: '9px 26px',
-            fontWeight: 800,
-            fontSize: 17,
-            marginLeft: 12,
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            boxShadow: '0 2px 12px #fbeaec',
-            transition: 'background 0.2s, transform 0.2s',
-          }}>
-            <FaSignInAlt style={{ fontSize: 20 }} /> Login
-          </Link>
+          {!isAuthenticated && (
+            <Link to="/login" style={{
+              background: 'linear-gradient(90deg, #c94f7c, #b85c8b)',
+              color: 'white',
+              border: 'none',
+              borderRadius: 22,
+              padding: '9px 26px',
+              fontWeight: 800,
+              fontSize: 17,
+              marginLeft: 12,
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              boxShadow: '0 2px 12px #fbeaec',
+              transition: 'background 0.2s, transform 0.2s',
+            }}>
+              <FaSignInAlt style={{ fontSize: 20 }} /> Login
+            </Link>
+          )}
           <Link to="/profile" style={{ color: '#b85c8b', fontSize: 28, marginLeft: 10, display: 'flex', alignItems: 'center', transition: 'color 0.2s, transform 0.2s' }}>
             <FaUserCircle />
           </Link>
