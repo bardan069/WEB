@@ -71,10 +71,14 @@ const Navbar = () => {
       top: 0,
       left: 0,
       right: 0,
-      background: '#fff',
-      boxShadow: '0 2px 20px rgba(201,79,124,0.08)',
+      background: 'rgba(255,255,255,0.75)',
+      boxShadow: '0 4px 32px #fbeaec44',
       zIndex: 1000,
       padding: '0 0',
+      backdropFilter: 'blur(12px)',
+      borderBottom: '2.5px solid #fbeaec',
+      borderRadius: '0 0 22px 22px',
+      transition: 'background 0.3s, box-shadow 0.3s',
     }}>
       <div style={{
         maxWidth: 1200,
@@ -82,24 +86,25 @@ const Navbar = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 70,
-        padding: '0 24px',
+        height: 74,
+        padding: '0 32px',
       }}>
-        <Link to="/" style={{ fontWeight: 700, fontSize: 26, color: '#c94f7c', textDecoration: 'none', letterSpacing: 1 }}>
-          Heart & Hues
+        <Link to="/" style={{ fontWeight: 900, fontSize: 30, color: '#c94f7c', textDecoration: 'none', letterSpacing: 2, fontFamily: 'Pacifico, Segoe UI, cursive', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 34, color: '#b85c8b', textShadow: '0 2px 8px #fbeaec' }}>♥</span> Heart & Hues
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
           <Link
             to="/"
             onClick={handleHomeClick}
             style={{
               color: isHomeActive ? '#b85c8b' : '#2c3e50',
-              fontWeight: 500,
-              fontSize: 17,
+              fontWeight: 600,
+              fontSize: 18,
               textDecoration: 'none',
-              padding: '6px 0',
-              borderBottom: isHomeActive ? '2.5px solid #c94f7c' : '2.5px solid transparent',
+              padding: '8px 0',
+              borderBottom: isHomeActive ? '3px solid #c94f7c' : '3px solid transparent',
               transition: 'color 0.2s, border 0.2s',
+              position: 'relative',
             }}
           >
             Home
@@ -109,12 +114,13 @@ const Navbar = () => {
             onClick={handleProductsClick}
             style={{
               color: isProductsActive ? '#b85c8b' : '#2c3e50',
-              fontWeight: 500,
-              fontSize: 17,
+              fontWeight: 600,
+              fontSize: 18,
               textDecoration: 'none',
-              padding: '6px 0',
-              borderBottom: isProductsActive ? '2.5px solid #c94f7c' : '2.5px solid transparent',
+              padding: '8px 0',
+              borderBottom: isProductsActive ? '3px solid #c94f7c' : '3px solid transparent',
               transition: 'color 0.2s, border 0.2s',
+              position: 'relative',
             }}
           >
             Products
@@ -123,31 +129,34 @@ const Navbar = () => {
             to="/favorites"
             style={{
               color: '#b85c8b',
-              fontWeight: 500,
-              fontSize: 17,
+              fontWeight: 600,
+              fontSize: 18,
               textDecoration: 'none',
-              padding: '6px 0',
+              padding: '8px 0',
               display: 'flex',
               alignItems: 'center',
-              gap: 6,
-              borderBottom: '2.5px solid transparent',
+              gap: 8,
+              borderBottom: '3px solid transparent',
+              position: 'relative',
               transition: 'color 0.2s, border 0.2s',
             }}
           >
-            <FaHeart style={{ fontSize: 18 }} /> Favorites
+            <FaHeart style={{ fontSize: 22, transition: 'color 0.2s, transform 0.2s' }} /> Favorites
             {favoritesCount > 0 && (
               <span style={{
                 position: 'absolute',
-                top: -7,
-                right: -12,
-                background: '#b85c8b',
+                top: -10,
+                right: -18,
+                background: 'linear-gradient(90deg, #c94f7c, #b85c8b)',
                 color: 'white',
                 borderRadius: '50%',
                 fontSize: 13,
-                fontWeight: 600,
-                padding: '2px 7px',
-                minWidth: 20,
+                fontWeight: 700,
+                padding: '3px 9px',
+                minWidth: 22,
                 textAlign: 'center',
+                boxShadow: '0 2px 8px #fbeaec',
+                border: '2px solid #fff',
               }}>{favoritesCount}</span>
             )}
           </Link>
@@ -156,31 +165,34 @@ const Navbar = () => {
             onClick={handleAboutClick}
             style={{
               color: location.pathname === '/about' ? '#b85c8b' : '#2c3e50',
-              fontWeight: 500,
-              fontSize: 17,
+              fontWeight: 600,
+              fontSize: 18,
               textDecoration: 'none',
-              padding: '6px 0',
-              borderBottom: location.pathname === '/about' ? '2.5px solid #c94f7c' : '2.5px solid transparent',
+              padding: '8px 0',
+              borderBottom: location.pathname === '/about' ? '3px solid #c94f7c' : '3px solid transparent',
               transition: 'color 0.2s, border 0.2s',
+              position: 'relative',
             }}
           >
             About
           </Link>
-          <Link to="/cart" style={{ position: 'relative', color: '#c94f7c', fontSize: 22 }}>
-            <FaShoppingCart />
+          <Link to="/cart" style={{ position: 'relative', color: '#c94f7c', fontSize: 26, marginLeft: 8, display: 'flex', alignItems: 'center', transition: 'color 0.2s, transform 0.2s' }}>
+            <FaShoppingCart style={{ transition: 'color 0.2s, transform 0.2s' }} />
             {getCartCount() > 0 && (
               <span style={{
                 position: 'absolute',
-                top: -7,
-                right: -12,
-                background: '#b85c8b',
+                top: -10,
+                right: -18,
+                background: 'linear-gradient(90deg, #c94f7c, #b85c8b)',
                 color: 'white',
                 borderRadius: '50%',
                 fontSize: 13,
-                fontWeight: 600,
-                padding: '2px 7px',
-                minWidth: 20,
+                fontWeight: 700,
+                padding: '3px 9px',
+                minWidth: 22,
                 textAlign: 'center',
+                boxShadow: '0 2px 8px #fbeaec',
+                border: '2px solid #fff',
               }}>{getCartCount()}</span>
             )}
           </Link>
@@ -189,24 +201,38 @@ const Navbar = () => {
             color: 'white',
             border: 'none',
             borderRadius: 22,
-            padding: '7px 22px',
-            fontWeight: 700,
-            fontSize: 16,
-            marginLeft: 8,
+            padding: '9px 26px',
+            fontWeight: 800,
+            fontSize: 17,
+            marginLeft: 12,
             textDecoration: 'none',
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
-            boxShadow: '0 2px 8px #fbeaec',
-            transition: 'background 0.2s',
+            gap: 10,
+            boxShadow: '0 2px 12px #fbeaec',
+            transition: 'background 0.2s, transform 0.2s',
           }}>
-            <FaSignInAlt style={{ fontSize: 18 }} /> Login
+            <FaSignInAlt style={{ fontSize: 20 }} /> Login
           </Link>
-          <Link to="/profile" style={{ color: '#b85c8b', fontSize: 24, marginLeft: 8 }}>
+          <Link to="/profile" style={{ color: '#b85c8b', fontSize: 28, marginLeft: 10, display: 'flex', alignItems: 'center', transition: 'color 0.2s, transform 0.2s' }}>
             <FaUserCircle />
           </Link>
         </div>
       </div>
+      <style>{`
+        nav a:hover, nav a:focus {
+          color: #c94f7c !important;
+          text-shadow: 0 2px 8px #fbeaec;
+          transform: scale(1.06);
+        }
+        nav a[style*='background: linear-gradient'] {
+          filter: brightness(1.08);
+        }
+        nav svg:hover {
+          color: #b85c8b !important;
+          transform: scale(1.15);
+        }
+      `}</style>
     </nav>
   );
 };

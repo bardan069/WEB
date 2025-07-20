@@ -17,7 +17,7 @@ import {
   FavoritesPage,
   CheckoutPage,
   OrderListPage,
-  OrderDetailsPage
+  OrderDetailsPage,
 } from './components/pages';
 
 // PrivateRoute component for protecting routes

@@ -239,6 +239,24 @@ const HomePage = () => {
               e.currentTarget.style.boxShadow = '0 2px 12px #fbeaec';
             }}
             >
+              {/* Add to Favorite Button */}
+              <button
+                onClick={() => toggleFavorite(product)}
+                style={{
+                  position: 'absolute',
+                  top: 18,
+                  right: 18,
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: isFavorite(product) ? '#c94f7c' : '#ccc',
+                  fontSize: 22,
+                  zIndex: 3
+                }}
+                title={isFavorite(product) ? 'Remove from Favorites' : 'Add to Favorites'}
+              >
+                <FaHeart />
+              </button>
               {/* Badge for best seller/new */}
               {i === 0 && <span style={{ position: 'absolute', top: 18, left: 18, background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', fontWeight: 700, fontSize: 13, borderRadius: 8, padding: '2px 12px', letterSpacing: 1, boxShadow: '0 1px 4px #fbeaec' }}>Best Seller</span>}
               {i === 1 && <span style={{ position: 'absolute', top: 18, left: 18, background: 'linear-gradient(90deg, #b85c8b, #c94f7c)', color: 'white', fontWeight: 700, fontSize: 13, borderRadius: 8, padding: '2px 12px', letterSpacing: 1, boxShadow: '0 1px 4px #fbeaec' }}>New</span>}
@@ -249,7 +267,15 @@ const HomePage = () => {
               <div style={{ color: '#c94f7c', fontWeight: 700, fontSize: 20, marginBottom: 6 }}>{product.name}</div>
               <div style={{ color: '#b85c8b', fontWeight: 600, fontSize: 18, marginBottom: 8 }}>{product.price}</div>
               <div style={{ color: '#888', fontSize: 15, marginBottom: 12 }}>Rating: {product.rating}</div>
-              <button style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 8, padding: '10px 24px', fontWeight: 600, fontSize: 16, boxShadow: '0 2px 8px #fbeaec', cursor: 'pointer', transition: 'background 0.2s' }}>Add to Cart</button>
+              <button
+                onClick={() => addToCart(product)}
+                style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 8, padding: '10px 24px', fontWeight: 600, fontSize: 16, boxShadow: '0 2px 8px #fbeaec', cursor: 'pointer', transition: 'background 0.2s', display: 'flex', alignItems: 'center', gap: 8 }}
+                title={isInCart(product) ? 'Already in Cart' : 'Add to Cart'}
+                disabled={isInCart(product)}
+              >
+                <FaShoppingCart style={{ fontSize: 18 }} />
+                {isInCart(product) ? 'In Cart' : 'Add to Cart'}
+              </button>
             </div>
           ))}
         </div>
