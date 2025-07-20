@@ -75,6 +75,18 @@ export const setFavoritesToStorage = (favorites) => {
   localStorage.setItem('favorites', JSON.stringify(favorites));
 };
 
+// Helper to get comments/ratings from localStorage
+const getProductFeedback = () => {
+  try {
+    return JSON.parse(localStorage.getItem('productFeedback')) || {};
+  } catch {
+    return {};
+  }
+};
+const setProductFeedback = (feedback) => {
+  localStorage.setItem('productFeedback', JSON.stringify(feedback));
+};
+
 const WavyDivider = () => (
   <svg viewBox="0 0 1440 90" style={{ display: 'block', width: '100%', height: 60, margin: 0 }}><path fill="#fbeaec" fillOpacity="1" d="M0,32L60,37.3C120,43,240,53,360,58.7C480,64,600,64,720,58.7C840,53,960,43,1080,42.7C1200,43,1320,53,1380,58.7L1440,64L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path></svg>
 );
@@ -84,6 +96,8 @@ const HomePage = () => {
   const [search, setSearch] = useState('');
   const [favorites, setFavorites] = useState(getFavoritesFromStorage());
   const { cart, addToCart } = useCart();
+  const [feedback, setFeedback] = useState(getProductFeedback());
+  const [commentInputs, setCommentInputs] = useState({}); // { [productId]: { comment: '', rating: 5 } }
 
   useEffect(() => {
     setFavoritesToStorage(favorites);
@@ -114,6 +128,40 @@ const HomePage = () => {
 
   // Make favorites available globally for navbar
   window.__FAVORITES_COUNT__ = favorites.length;
+
+  // Handle comment/rating input change
+  const handleCommentInput = (productId, field, value) => {
+    setCommentInputs(inputs => ({
+      ...inputs,
+      [productId]: {
+        ...inputs[productId],
+        [field]: value
+      }
+    }));
+  };
+
+  // Handle comment/rating submit
+  const handleCommentSubmit = (productId, e) => {
+    e.preventDefault();
+    const { comment = '', rating = 5 } = commentInputs[productId] || {};
+    if (!comment.trim()) {
+      toast.error('Please enter a comment.');
+      return;
+    }
+    if (!rating || rating < 1 || rating > 5) {
+      toast.error('Please provide a rating between 1 and 5.');
+      return;
+    }
+    setFeedback(prev => {
+      const prevList = prev[productId] || [];
+      return {
+        ...prev,
+        [productId]: [...prevList, { comment, rating: Number(rating), date: new Date().toISOString() }]
+      };
+    });
+    setCommentInputs(inputs => ({ ...inputs, [productId]: { comment: '', rating: 5 } }));
+    toast.success('Thank you for your feedback!');
+  };
 
   return (
     <div style={{ background: 'linear-gradient(120deg, #fbeaec 0%, #f7e1f3 100%)', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
@@ -213,71 +261,111 @@ const HomePage = () => {
       <section id="products" style={{ maxWidth: 1100, margin: '0 auto 56px', padding: '32px 0', borderRadius: 18, background: 'rgba(255,255,255,0.7)', boxShadow: '0 2px 16px #fbeaec', animation: 'fadeIn 1.2s', position: 'relative', zIndex: 2 }}>
         <h3 style={{ color: '#b85c8b', fontSize: 28, fontWeight: 700, marginBottom: 32, textAlign: 'center', letterSpacing: 1 }}>Featured Gifts</h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 36, justifyContent: 'center' }}>
-          {filteredProducts.map((product, i) => (
-            <div key={product.id} style={{
-              background: '#fff',
-              borderRadius: 18,
-              boxShadow: '0 2px 12px #fbeaec',
-              padding: 28,
-              minWidth: 220,
-              maxWidth: 260,
-              flex: '1 1 220px',
-              textAlign: 'center',
-              transition: 'transform 0.18s, box-shadow 0.18s',
-              cursor: 'pointer',
-              position: 'relative',
-              animation: `popIn 1.2s ${i * 0.12}s both`,
-              marginBottom: 12,
-              border: '2px solid #fbeaec',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateY(-8px) scale(1.04)';
-              e.currentTarget.style.boxShadow = '0 8px 32px #fbeaec';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = '';
-              e.currentTarget.style.boxShadow = '0 2px 12px #fbeaec';
-            }}
-            >
-              {/* Add to Favorite Button */}
-              <button
-                onClick={() => toggleFavorite(product)}
-                style={{
-                  position: 'absolute',
-                  top: 18,
-                  right: 18,
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: isFavorite(product) ? '#c94f7c' : '#ccc',
-                  fontSize: 22,
-                  zIndex: 3
-                }}
-                title={isFavorite(product) ? 'Remove from Favorites' : 'Add to Favorites'}
+          {filteredProducts.map((product, i) => {
+            const productFeedback = feedback[product.id] || [];
+            const avgRating = productFeedback.length ? (productFeedback.reduce((sum, f) => sum + f.rating, 0) / productFeedback.length).toFixed(2) : product.rating;
+            return (
+              <div key={product.id} style={{
+                background: '#fff',
+                borderRadius: 18,
+                boxShadow: '0 2px 12px #fbeaec',
+                padding: 28,
+                minWidth: 220,
+                maxWidth: 260,
+                flex: '1 1 220px',
+                textAlign: 'center',
+                transition: 'transform 0.18s, box-shadow 0.18s',
+                cursor: 'pointer',
+                position: 'relative',
+                animation: `popIn 1.2s ${i * 0.12}s both`,
+                marginBottom: 12,
+                border: '2px solid #fbeaec',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-8px) scale(1.04)';
+                e.currentTarget.style.boxShadow = '0 8px 32px #fbeaec';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = '';
+                e.currentTarget.style.boxShadow = '0 2px 12px #fbeaec';
+              }}
               >
-                <FaHeart />
-              </button>
-              {/* Badge for best seller/new */}
-              {i === 0 && <span style={{ position: 'absolute', top: 18, left: 18, background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', fontWeight: 700, fontSize: 13, borderRadius: 8, padding: '2px 12px', letterSpacing: 1, boxShadow: '0 1px 4px #fbeaec' }}>Best Seller</span>}
-              {i === 1 && <span style={{ position: 'absolute', top: 18, left: 18, background: 'linear-gradient(90deg, #b85c8b, #c94f7c)', color: 'white', fontWeight: 700, fontSize: 13, borderRadius: 8, padding: '2px 12px', letterSpacing: 1, boxShadow: '0 1px 4px #fbeaec' }}>New</span>}
-              <img src={product.image} alt={product.name} style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 12, marginBottom: 18, boxShadow: '0 2px 8px #fbeaec', transition: 'transform 0.3s' }}
-                onMouseOver={e => e.currentTarget.style.transform = 'scale(1.08)'}
-                onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-              />
-              <div style={{ color: '#c94f7c', fontWeight: 700, fontSize: 20, marginBottom: 6 }}>{product.name}</div>
-              <div style={{ color: '#b85c8b', fontWeight: 600, fontSize: 18, marginBottom: 8 }}>{product.price}</div>
-              <div style={{ color: '#888', fontSize: 15, marginBottom: 12 }}>Rating: {product.rating}</div>
-              <button
-                onClick={() => addToCart(product)}
-                style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 8, padding: '10px 24px', fontWeight: 600, fontSize: 16, boxShadow: '0 2px 8px #fbeaec', cursor: 'pointer', transition: 'background 0.2s', display: 'flex', alignItems: 'center', gap: 8 }}
-                title={isInCart(product) ? 'Already in Cart' : 'Add to Cart'}
-                disabled={isInCart(product)}
-              >
-                <FaShoppingCart style={{ fontSize: 18 }} />
-                {isInCart(product) ? 'In Cart' : 'Add to Cart'}
-              </button>
-            </div>
-          ))}
+                {/* Add to Favorite Button */}
+                <button
+                  onClick={() => toggleFavorite(product)}
+                  style={{
+                    position: 'absolute',
+                    top: 18,
+                    right: 18,
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: isFavorite(product) ? '#c94f7c' : '#ccc',
+                    fontSize: 22,
+                    zIndex: 3
+                  }}
+                  title={isFavorite(product) ? 'Remove from Favorites' : 'Add to Favorites'}
+                >
+                  <FaHeart />
+                </button>
+                {/* Badge for best seller/new */}
+                {i === 0 && <span style={{ position: 'absolute', top: 18, left: 18, background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', fontWeight: 700, fontSize: 13, borderRadius: 8, padding: '2px 12px', letterSpacing: 1, boxShadow: '0 1px 4px #fbeaec' }}>Best Seller</span>}
+                {i === 1 && <span style={{ position: 'absolute', top: 18, left: 18, background: 'linear-gradient(90deg, #b85c8b, #c94f7c)', color: 'white', fontWeight: 700, fontSize: 13, borderRadius: 8, padding: '2px 12px', letterSpacing: 1, boxShadow: '0 1px 4px #fbeaec' }}>New</span>}
+                <img src={product.image} alt={product.name} style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 12, marginBottom: 18, boxShadow: '0 2px 8px #fbeaec', transition: 'transform 0.3s' }}
+                  onMouseOver={e => e.currentTarget.style.transform = 'scale(1.08)'}
+                  onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                />
+                <div style={{ color: '#c94f7c', fontWeight: 700, fontSize: 20, marginBottom: 6 }}>{product.name}</div>
+                <div style={{ color: '#b85c8b', fontWeight: 600, fontSize: 18, marginBottom: 8 }}>{product.price}</div>
+                <div style={{ color: '#888', fontSize: 15, marginBottom: 12 }}>Rating: {avgRating} <span style={{ color: '#c94f7c', fontWeight: 700 }}>★</span> ({productFeedback.length || 'No'} review{productFeedback.length === 1 ? '' : 's'})</div>
+                {/* Comments/Rating Section */}
+                <div style={{ marginTop: 18, textAlign: 'left' }}>
+                  <form onSubmit={e => handleCommentSubmit(product.id, e)} style={{ marginBottom: 10, background: '#fbeaec22', borderRadius: 10, padding: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                      <input
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={(commentInputs[product.id]?.rating) ?? 5}
+                        onChange={e => handleCommentInput(product.id, 'rating', e.target.value)}
+                        style={{ width: 48, borderRadius: 6, border: '1px solid #e9b6d0', padding: '4px 8px', fontSize: 15, color: '#c94f7c' }}
+                        required
+                        title="Rate 1-5"
+                      />
+                      <span style={{ color: '#c94f7c', fontWeight: 700 }}>★</span>
+                      <input
+                        type="text"
+                        placeholder="Add a comment..."
+                        value={commentInputs[product.id]?.comment || ''}
+                        onChange={e => handleCommentInput(product.id, 'comment', e.target.value)}
+                        style={{ flex: 1, borderRadius: 6, border: '1px solid #e9b6d0', padding: '4px 8px', fontSize: 15, color: '#b85c8b' }}
+                        required
+                      />
+                      <button type="submit" style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 6, padding: '6px 14px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>Post</button>
+                    </div>
+                  </form>
+                  <div style={{ maxHeight: 80, overflowY: 'auto', fontSize: 14 }}>
+                    {productFeedback.length === 0 && <div style={{ color: '#aaa' }}>No comments yet.</div>}
+                    {productFeedback.map((fb, idx) => (
+                      <div key={idx} style={{ marginBottom: 6, background: '#fff8fa', borderRadius: 6, padding: '6px 8px', color: '#b85c8b' }}>
+                        <span style={{ color: '#c94f7c', fontWeight: 700 }}>{fb.rating}★</span> {fb.comment}
+                        <span style={{ color: '#aaa', fontSize: 12, marginLeft: 6 }}>{new Date(fb.date).toLocaleDateString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => addToCart(product)}
+                  style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 8, padding: '10px 24px', fontWeight: 600, fontSize: 16, boxShadow: '0 2px 8px #fbeaec', cursor: 'pointer', transition: 'background 0.2s', display: 'flex', alignItems: 'center', gap: 8 }}
+                  title={isInCart(product) ? 'Already in Cart' : 'Add to Cart'}
+                  disabled={isInCart(product)}
+                >
+                  <FaShoppingCart style={{ fontSize: 18 }} />
+                  {isInCart(product) ? 'In Cart' : 'Add to Cart'}
+                </button>
+              </div>
+            );
+          })}
         </div>
       </section>
       <WavyDivider />
