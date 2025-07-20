@@ -323,8 +323,8 @@ const HomePage = () => {
                 </div>
                 {/* Comments/Rating Section */}
                 <div style={{ marginTop: 18, textAlign: 'left', background: '#fbeaec22', borderRadius: 12, padding: 12, boxShadow: '0 1px 6px #fbeaec33', minHeight: 60 }}>
-                  <form onSubmit={e => handleCommentSubmit(product.id, e)} style={{ marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8, background: '#fff', borderRadius: 8, padding: 8, boxShadow: '0 1px 4px #fbeaec22' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <form onSubmit={e => handleCommentSubmit(product.id, e)} style={{ marginBottom: 14, display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 6, background: '#fff', borderRadius: 8, padding: 8, boxShadow: '0 1px 4px #fbeaec22' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
                       <input
                         type="number"
                         min={1}
@@ -336,16 +336,16 @@ const HomePage = () => {
                         title="Rate 1-5"
                       />
                       <FaStar style={{ color: '#ffd700', fontSize: 18, marginLeft: 2 }} />
+                      <input
+                        type="text"
+                        placeholder="Add a comment..."
+                        value={commentInputs[product.id]?.comment || ''}
+                        onChange={e => handleCommentInput(product.id, 'comment', e.target.value)}
+                        style={{ width: 120, borderRadius: 6, border: '1.5px solid #e9b6d0', padding: '4px 7px', fontSize: 14, color: '#b85c8b', background: '#fff8fa' }}
+                        required
+                      />
                     </div>
-                    <input
-                      type="text"
-                      placeholder="Add a comment..."
-                      value={commentInputs[product.id]?.comment || ''}
-                      onChange={e => handleCommentInput(product.id, 'comment', e.target.value)}
-                      style={{ flex: 1, borderRadius: 6, border: '1.5px solid #e9b6d0', padding: '6px 10px', fontSize: 15, color: '#b85c8b', background: '#fff8fa' }}
-                      required
-                    />
-                    <button type="submit" style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 6, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer', boxShadow: '0 1px 4px #fbeaec22' }}>Post</button>
+                    <button type="submit" style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 6, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer', boxShadow: '0 1px 4px #fbeaec22', marginTop: 2 }}>Post</button>
                   </form>
                   <div style={{ maxHeight: 90, overflowY: 'auto', fontSize: 15, paddingRight: 2 }}>
                     {productFeedback.length === 0 && <div style={{ color: '#aaa', fontStyle: 'italic', textAlign: 'center', padding: 8 }}>No comments yet.</div>}
