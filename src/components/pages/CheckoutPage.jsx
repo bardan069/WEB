@@ -24,7 +24,7 @@ const CheckoutPage = () => {
     try {
       // Prepare order data
       const orderData = {
-        user: null, 
+        user: null, // Replace with user ID if available from auth context
         products: cart.map(item => ({ product: item.id, quantity: item.quantity })),
         total: getCartTotal()
       };
