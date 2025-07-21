@@ -79,7 +79,7 @@ function ProductsSection() {
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
 
-  // Fetch products
+  
   useEffect(() => {
     fetch('/api/products')
       .then(res => res.json())
