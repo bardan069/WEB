@@ -30,8 +30,9 @@ function PrivateRoute({ children }) {
 }
 
 function AdminRoute({ children }) {
-  const { isAdmin } = useAuth();
-  return isAdmin ? children : <Navigate to="/admin-login" />;
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  return user && user.role === 'admin' ? children : <Navigate to="/admin-login" />;
 }
 
 function App() {

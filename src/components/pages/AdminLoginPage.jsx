@@ -11,18 +11,18 @@ const AdminLoginPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setAdmin } = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      setAdmin();
-      setTimeout(() => {
-        navigate('/admin-dashboard');
-      }, 100); // Delay to ensure context updates
+    const result = await login(email, password);
+    if (result.success && result.user && result.user.role === 'admin') {
+      navigate('/admin-dashboard');
+    } else if (result.success) {
+      alert('You are not an admin.');
     } else {
-      alert('Invalid admin credentials');
+      alert(result.error || 'Invalid admin credentials');
     }
     setLoading(false);
   };

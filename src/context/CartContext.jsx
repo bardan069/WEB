@@ -32,10 +32,10 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product, quantity = 1) => {
     setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === product.id);
+      const existingItem = prevCart.find(item => item._id === product._id);
       if (existingItem) {
         const updatedCart = prevCart.map(item =>
-          item.id === product.id
+          item._id === product._id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
@@ -51,8 +51,8 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = (productId) => {
     setCart(prevCart => {
-      const item = prevCart.find(item => item.id === productId);
-      const newCart = prevCart.filter(item => item.id !== productId);
+      const item = prevCart.find(item => item._id === productId);
+      const newCart = prevCart.filter(item => item._id !== productId);
       if (item) {
         toast.success(`Removed ${item.name} from cart`);
       }
@@ -67,7 +67,7 @@ export const CartProvider = ({ children }) => {
     }
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === productId
+        item._id === productId
           ? { ...item, quantity }
           : item
       )
@@ -81,11 +81,12 @@ export const CartProvider = ({ children }) => {
 
   const getCartTotal = () => {
     return cart.reduce((total, item) => {
-      // Remove any non-numeric characters except dot and minus
-      const price = parseFloat(
-        (item.price || '')
-          .replace(/[^0-9.]/g, '')
-      );
+      let price = 0;
+      if (typeof item.price === 'string') {
+        price = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+      } else {
+        price = Number(item.price) || 0;
+      }
       return total + (price * item.quantity);
     }, 0);
   };

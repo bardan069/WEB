@@ -36,31 +36,54 @@ export const AuthProvider = ({ children }) => {
   const clearAdmin = () => setIsAdmin(false);
 
   const login = async (email, password) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = users.find(u => u.email === email && u.password === password);
-    if (foundUser) {
-      setUser(foundUser);
-      localStorage.setItem('user', JSON.stringify(foundUser));
-      toast.success('Welcome back!');
-      return { success: true };
-    } else {
-      toast.error('Invalid email or password');
-      return { success: false, error: 'Invalid email or password' };
+    try {
+      const res = await fetch('/api/v1/customers/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        const userWithToken = { ...data.user, token: data.token };
+        setUser(userWithToken);
+        localStorage.setItem('user', JSON.stringify(userWithToken));
+        toast.success('Welcome back!');
+        return { success: true, user: userWithToken };
+      } else {
+        toast.error(data.message || 'Invalid email or password');
+        return { success: false, error: data.message || 'Invalid email or password' };
+      }
+    } catch (err) {
+      toast.error('Login failed');
+      return { success: false, error: 'Login failed' };
     }
   };
 
   const signup = async (userData) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    if (users.find(u => u.email === userData.email)) {
-      toast.error('Email already exists');
-      return { success: false, error: 'Email already exists' };
+    try {
+      const res = await fetch('/api/v1/customers/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fname: userData.firstName,
+          lname: userData.lastName,
+          email: userData.email,
+          password: userData.password,
+          phone: userData.phone || '',
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Account created successfully!');
+        return { success: true };
+      } else {
+        toast.error(data.message || 'Signup failed');
+        return { success: false, error: data.message || 'Signup failed' };
+      }
+    } catch (err) {
+      toast.error('Signup failed');
+      return { success: false, error: 'Signup failed' };
     }
-    users.push(userData);
-    localStorage.setItem('users', JSON.stringify(users));
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    toast.success('Account created successfully!');
-    return { success: true };
   };
 
   const logout = () => {

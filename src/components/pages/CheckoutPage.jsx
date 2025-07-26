@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 import { FaUser, FaEnvelope, FaMapMarkerAlt, FaPhone, FaCheckCircle } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
+  const { user } = useAuth();
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -22,22 +25,38 @@ const CheckoutPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Prepare order data
+      // Prepare order data for backend
       const orderData = {
-        user: null, // Replace with user ID if available from auth context
-        products: cart.map(item => ({ product: item.id, quantity: item.quantity })),
-        total: getCartTotal()
+        shippingAddress: {
+          fullName: form.name,
+          address: form.address,
+          phone: form.phone
+        },
+        paymentMethod: 'cash-on-delivery',
+        items: cart.map(item => ({
+          gift: item._id || item.id,
+          quantity: item.quantity,
+          price: typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price
+        })),
+        subtotal: getCartTotal(),
+        tax: 0,
+        shippingCost: 0,
+        totalAmount: getCartTotal(),
+        notes: ''
       };
-      const res = await fetch('/api/orders', {
+      const res = await fetch('/api/v1/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': user && user.token ? `Bearer ${user.token}` : ''
+        },
         body: JSON.stringify(orderData)
       });
       if (!res.ok) throw new Error('Order creation failed');
-      // Optionally, you can get the created order: const order = await res.json();
       clearCart();
+      toast.success('Order confirmed');
       setLoading(false);
-      navigate('/orders');
+      setTimeout(() => navigate('/orders'), 1200);
     } catch (err) {
       setLoading(false);
       alert(err.message);
@@ -75,8 +94,8 @@ const CheckoutPage = () => {
           <h3 style={{ color: '#b85c8b', fontWeight: 700, fontSize: 22, marginBottom: 18 }}>Order Summary</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginBottom: 18 }}>
             {cart.map(item => (
-              <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#fbeaec', borderRadius: 10, padding: 10 }}>
-                <img src={item.image} alt={item.name} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #e9b6d0' }} />
+              <div key={item._id || item.id} style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#fbeaec', borderRadius: 10, padding: 10 }}>
+                <img src={item.images && item.images[0] ? `http://localhost:3000${item.images[0]}` : (item.image || '')} alt={item.name} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 4px #e9b6d0' }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ color: '#c94f7c', fontWeight: 600, fontSize: 15 }}>{item.name}</div>
                   <div style={{ color: '#b85c8b', fontWeight: 500, fontSize: 14 }}>{item.price} x {item.quantity}</div>
@@ -84,7 +103,7 @@ const CheckoutPage = () => {
               </div>
             ))}
           </div>
-          <div style={{ color: '#b85c8b', fontWeight: 600, fontSize: 20, marginBottom: 8 }}>Total: <span style={{ color: '#c94f7c', fontWeight: 700 }}>${getCartTotal().toFixed(2)}</span></div>
+          <div style={{ color: '#b85c8b', fontWeight: 600, fontSize: 20, marginBottom: 28 }}>Total: <span style={{ color: '#c94f7c', fontWeight: 700 }}>NRS {getCartTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
         </div>
       </div>
     </div>

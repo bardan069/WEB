@@ -10,15 +10,21 @@ const Footer = () => {
       fontSize: 16,
       borderTop: '1.5px solid #f3e6ee',
       marginTop: 40,
+      width: '100vw',
+      left: 0,
+      position: 'relative',
+      boxSizing: 'border-box',
     }}>
-      <div style={{ marginBottom: 8 }}>
-        <a href="/" style={{ color: '#c94f7c', margin: '0 14px', textDecoration: 'none', fontWeight: 500 }}>Home</a>
-        <a href="/products" style={{ color: '#c94f7c', margin: '0 14px', textDecoration: 'none', fontWeight: 500 }}>Products</a>
-        <a href="/about" style={{ color: '#c94f7c', margin: '0 14px', textDecoration: 'none', fontWeight: 500 }}>About</a>
-        <a href="/contact" style={{ color: '#c94f7c', margin: '0 14px', textDecoration: 'none', fontWeight: 500 }}>Contact</a>
-      </div>
-      <div style={{ fontSize: 15, color: '#b85c8b' }}>
-        &copy; {new Date().getFullYear()} Heart & Hues. All rights reserved.
+      <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+        <div style={{ marginBottom: 8 }}>
+          <a href="/" style={{ color: '#c94f7c', margin: '0 14px', textDecoration: 'none', fontWeight: 500 }}>Home</a>
+          <a href="/products" style={{ color: '#c94f7c', margin: '0 14px', textDecoration: 'none', fontWeight: 500 }}>Products</a>
+          <a href="/about" style={{ color: '#c94f7c', margin: '0 14px', textDecoration: 'none', fontWeight: 500 }}>About</a>
+          <a href="/contact" style={{ color: '#c94f7c', margin: '0 14px', textDecoration: 'none', fontWeight: 500 }}>Contact</a>
+        </div>
+        <div style={{ fontSize: 15, color: '#b85c8b' }}>
+          &copy; {new Date().getFullYear()} Heart & Hues. All rights reserved.
+        </div>
       </div>
     </footer>
   );

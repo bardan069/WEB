@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaBoxOpen, FaClipboardList, FaChartBar, FaCog, FaPlus, FaEdit, FaTrash, FaUserCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 
 const dashboardSections = [
   { key: 'products', title: 'Product Management', icon: <FaBoxOpen />, color: '#c94f7c' },
@@ -81,7 +82,7 @@ function ProductsSection() {
 
   // Fetch products
   useEffect(() => {
-    fetch('/api/products')
+    fetch('/api/v1/gifts')
       .then(res => res.json())
       .then(data => {
         setProducts(data.data || []);
@@ -116,16 +117,43 @@ function ProductsSection() {
     e.preventDefault();
     setSaving(true);
     const method = editProduct ? 'PUT' : 'POST';
-    const url = editProduct ? `/api/products/${editProduct.id}` : '/api/products';
+    const url = editProduct ? `/api/v1/gifts/${editProduct._id}` : '/api/v1/gifts';
+    let body;
+    let headers = {};
+    if (form.imageFile) {
+      body = new FormData();
+      body.append('image', form.imageFile);
+      body.append('name', form.name);
+      body.append('brand', form.brand || '');
+      body.append('category', form.category || 'Other');
+      body.append('description', form.description);
+      body.append('price', form.price);
+      body.append('originalPrice', form.originalPrice || '');
+      body.append('discount', form.discount || '');
+      body.append('stock', form.stock || 1);
+      body.append('isAvailable', form.isAvailable || true);
+      body.append('isFeatured', form.isFeatured || false);
+      body.append('rating', form.rating || 0);
+      body.append('numReviews', form.numReviews || 0);
+      body.append('tags', form.tags || '');
+      body.append('shippingInfo', JSON.stringify(form.shippingInfo || {}));
+    } else {
+      body = JSON.stringify({ ...form });
+      headers['Content-Type'] = 'application/json';
+    }
     const res = await fetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, price: parseFloat(form.price) })
+      headers,
+      body
     });
-    const data = await res.json();
-    if (res.ok) {
+    let data = null;
+    const contentType = res.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      data = await res.json();
+    }
+    if (res.ok && data && data.data) {
       if (editProduct) {
-        setProducts(products.map(p => (p.id === editProduct.id ? data.data : p)));
+        setProducts(products.map(p => (p._id === editProduct._id ? data.data : p)));
         toast.success('Product updated!');
       } else {
         setProducts([...products, data.data]);
@@ -133,7 +161,7 @@ function ProductsSection() {
       }
       closeModal();
     } else {
-      toast.error(data.error || data.message || 'Failed to save product');
+      toast.error((data && (data.error || data.message)) || 'Failed to save product');
     }
     setSaving(false);
   };
@@ -141,9 +169,9 @@ function ProductsSection() {
   // Delete
   const handleDelete = async id => {
     if (!window.confirm('Delete this product?')) return;
-    const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/v1/gifts/${id}`, { method: 'DELETE' });
     if (res.ok) {
-      setProducts(products.filter(p => p.id !== id));
+      setProducts(products.filter(p => p._id !== id));
       toast.success('Product deleted!');
     } else toast.error('Failed to delete product');
   };
@@ -174,7 +202,7 @@ function ProductsSection() {
         <table style={{ width: '100%', borderRadius: 18, minWidth: 600, color: '#b85c8b', fontWeight: 600, fontSize: 16, borderCollapse: 'separate', borderSpacing: 0, overflow: 'hidden' }}>
           <thead>
             <tr style={{ background: 'linear-gradient(90deg, #fbeaec 60%, #f7e1f3 100%)' }}>
-              <th style={{ padding: 16, textAlign: 'left', fontWeight: 800, fontSize: 17, color: '#c94f7c', borderTopLeftRadius: 18 }}>ID</th>
+              <th style={{ padding: 16, textAlign: 'left', fontWeight: 800, fontSize: 17, color: '#c94f7c', borderTopLeftRadius: 18 }}>#</th>
               <th style={{ padding: 16, textAlign: 'left', fontWeight: 800, fontSize: 17, color: '#c94f7c' }}>Name</th>
               <th style={{ padding: 16, textAlign: 'left', fontWeight: 800, fontSize: 17, color: '#c94f7c' }}>Price</th>
               <th style={{ padding: 16, textAlign: 'left', fontWeight: 800, fontSize: 17, color: '#c94f7c' }}>Description</th>
@@ -183,18 +211,20 @@ function ProductsSection() {
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map(product => (
-              <tr key={product.id} style={{ background: '#fff', transition: 'background 0.18s' }} onMouseOver={e => e.currentTarget.style.background = '#fbeaec44'} onMouseOut={e => e.currentTarget.style.background = '#fff'}>
-                <td style={{ padding: 14 }}>{product.id}</td>
+            {filteredProducts.map((product, idx) => (
+              <tr key={product._id} style={{ background: '#fff', transition: 'background 0.18s' }} onMouseOver={e => e.currentTarget.style.background = '#fbeaec44'} onMouseOut={e => e.currentTarget.style.background = '#fff'}>
+                <td style={{ padding: 14 }}>{idx + 1}</td>
                 <td style={{ padding: 14 }}>{product.name}</td>
                 <td style={{ padding: 14 }}>{product.price}</td>
                 <td style={{ padding: 14, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.description}</td>
                 <td style={{ padding: 14 }}>
-                  {product.image ? <img src={product.image} alt={product.name} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 10, boxShadow: '0 1px 6px #fbeaec' }} /> : <span style={{ color: '#ccc' }}>No image</span>}
+                  {product.images && product.images.length > 0 ? (
+                    <img src={`http://localhost:3000${product.images[0]}`} alt={product.name} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 10, boxShadow: '0 1px 6px #fbeaec' }} />
+                  ) : <span style={{ color: '#ccc' }}>No image</span>}
                 </td>
                 <td style={{ padding: 14 }}>
                   <button onClick={() => openModal(product)} style={{ marginRight: 8, background: 'linear-gradient(90deg, #6e8fbf, #b85c8b)', color: 'white', border: 'none', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 16, transition: 'background 0.2s' }} title="Edit Product"><FaEdit /></button>
-                  <button onClick={() => handleDelete(product.id)} style={{ background: 'linear-gradient(90deg, #c94f7c, #d47fa6)', color: 'white', border: 'none', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 16, transition: 'background 0.2s' }} title="Delete Product"><FaTrash /></button>
+                  <button onClick={() => handleDelete(product._id)} style={{ background: 'linear-gradient(90deg, #c94f7c, #d47fa6)', color: 'white', border: 'none', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 16, transition: 'background 0.2s' }} title="Delete Product"><FaTrash /></button>
                 </td>
               </tr>
             ))}
@@ -216,15 +246,9 @@ function ProductsSection() {
             <label style={{ fontWeight: 700, color: '#b85c8b' }}>Description
               <textarea name="description" value={form.description} onChange={handleChange} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1.5px solid #e9b6d0', fontSize: 17, marginTop: 7, minHeight: 60, background: '#fff8fa', transition: 'border 0.2s' }} />
             </label>
-            <label style={{ fontWeight: 700, color: '#b85c8b' }}>Image URL
-              <input name="image" value={form.image} onChange={handleChange} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1.5px solid #e9b6d0', fontSize: 17, marginTop: 7, background: '#fff8fa', transition: 'border 0.2s' }} />
+            <label style={{ fontWeight: 700, color: '#b85c8b' }}>Image
+              <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, imageFile: e.target.files[0] }))} style={{ width: '100%', marginTop: 7 }} />
             </label>
-            {form.image && (
-              <div style={{ textAlign: 'center', margin: '10px 0' }}>
-                <img src={form.image} alt="Preview" style={{ maxWidth: 120, maxHeight: 120, borderRadius: 10, boxShadow: '0 1px 6px #fbeaec' }} />
-                <div style={{ color: '#b85c8b', fontSize: 13, marginTop: 4 }}>Image Preview</div>
-              </div>
-            )}
             <div style={{ display: 'flex', gap: 14, marginTop: 12 }}>
               <button type="submit" disabled={saving} style={{ background: 'linear-gradient(90deg, #c94f7c, #b85c8b)', color: 'white', border: 'none', borderRadius: 12, padding: '12px 28px', fontWeight: 800, fontSize: 17, boxShadow: '0 2px 8px #fbeaec', cursor: 'pointer', flex: 1, transition: 'background 0.2s' }}>{saving ? 'Saving...' : (editProduct ? 'Update' : 'Add')}</button>
               <button type="button" onClick={closeModal} style={{ background: '#eee', color: '#c94f7c', border: 'none', borderRadius: 12, padding: '12px 28px', fontWeight: 800, fontSize: 17, boxShadow: '0 2px 8px #fbeaec', cursor: 'pointer', flex: 1, transition: 'background 0.2s' }}>Cancel</button>
@@ -247,6 +271,7 @@ function ProductsSection() {
 }
 
 function UsersSection() {
+  const { user } = useAuth();
   const [users, setUsers] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -258,7 +283,11 @@ function UsersSection() {
 
   // Fetch users
   React.useEffect(() => {
-    fetch('/api/users')
+    fetch('/api/v1/customers', {
+      headers: {
+        'Authorization': user && user.token ? `Bearer ${user.token}` : ''
+      }
+    })
       .then(res => res.json())
       .then(data => {
         setUsers(data.data || []);
@@ -268,7 +297,7 @@ function UsersSection() {
         setError('Failed to fetch users');
         setLoading(false);
       });
-  }, []);
+  }, [user]);
 
   // Open modal for add/edit
   const openModal = (user = null) => {
@@ -293,7 +322,7 @@ function UsersSection() {
     e.preventDefault();
     setSaving(true);
     const method = editUser ? 'PUT' : 'POST';
-    const url = editUser ? `/api/users/${editUser.id}` : '/api/users';
+    const url = editUser ? `/api/v1/customers/${editUser._id}` : '/api/v1/customers';
     const body = { ...form };
     if (!editUser && !form.password) {
       toast.error('Password is required for new users');
@@ -316,7 +345,7 @@ function UsersSection() {
     const data = await res.json();
     if (res.ok) {
       if (editUser) {
-        setUsers(users.map(u => (u.id === editUser.id ? data.data : u)));
+        setUsers(users.map(u => (u._id === editUser._id ? data.data : u)));
         toast.success('User updated!');
       } else {
         setUsers([...users, data.data]);
@@ -332,18 +361,23 @@ function UsersSection() {
   // Delete
   const handleDelete = async id => {
     if (!window.confirm('Delete this user?')) return;
-    const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/v1/customers/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': user && user.token ? `Bearer ${user.token}` : ''
+      }
+    });
     if (res.ok) {
-      setUsers(users.filter(u => u.id !== id));
+      setUsers(users.filter(u => u._id !== id));
       toast.success('User deleted!');
     } else toast.error('Failed to delete user');
   };
 
   // Filtered users
-  const filteredUsers = users.filter(u =>
-    u.name.toLowerCase().includes(search.toLowerCase()) ||
-    u.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = users.filter(u => {
+    const name = (u.fname || '') + ' ' + (u.lname || '');
+    return name.toLowerCase().includes(search.toLowerCase()) || (u.email || '').toLowerCase().includes(search.toLowerCase());
+  });
 
   if (loading) return <div>Loading users...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
@@ -353,7 +387,7 @@ function UsersSection() {
       <Toaster position="top-right" />
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, width: '100%', justifyContent: 'space-between' }}>
         <h2 style={{ color: '#b85c8b', fontWeight: 900, fontSize: 32, marginBottom: 0, letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 14, textShadow: '0 2px 8px #fbeaec' }}><FaUserCircle /> User Management</h2>
-        <button onClick={() => openModal()} style={{ background: 'linear-gradient(90deg, #b85c8b, #6e8fbf)', color: 'white', border: 'none', borderRadius: 14, padding: '12px 28px', fontWeight: 800, fontSize: 18, boxShadow: '0 2px 12px #fbeaec', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', transition: 'background 0.2s, box-shadow 0.2s', outline: 'none' }} title="Add User"><FaPlus /> Add User</button>
+        {/* Removed Add User button */}
       </div>
       <div style={{ width: '100%', margin: '10px 0 20px 0', display: 'flex', justifyContent: 'flex-end' }}>
         <input
@@ -377,9 +411,9 @@ function UsersSection() {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map(user => (
-              <tr key={user.id} style={{ background: '#fff', transition: 'background 0.18s' }} onMouseOver={e => e.currentTarget.style.background = '#fbeaec44'} onMouseOut={e => e.currentTarget.style.background = '#fff'}>
-                <td style={{ padding: 14 }}>{user.id}</td>
+            {filteredUsers.map((user, idx) => (
+              <tr key={user._id} style={{ background: '#fff', transition: 'background 0.18s' }} onMouseOver={e => e.currentTarget.style.background = '#fbeaec44'} onMouseOut={e => e.currentTarget.style.background = '#fff'}>
+                <td style={{ padding: 14 }}>{idx + 1}</td>
                 <td style={{ padding: 14 }}>
                   {user.avatar ? (
                     <img src={user.avatar} alt={user.name} style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: '50%', boxShadow: '0 1px 6px #fbeaec' }} />
@@ -387,12 +421,12 @@ function UsersSection() {
                     <FaUserCircle style={{ fontSize: 36, color: '#e9b6d0' }} />
                   )}
                 </td>
-                <td style={{ padding: 14 }}>{user.name}</td>
+                <td style={{ padding: 14 }}>{(user.fname || '') + ' ' + (user.lname || '')}</td>
                 <td style={{ padding: 14 }}>{user.email}</td>
                 <td style={{ padding: 14, textTransform: 'capitalize' }}>{user.role}</td>
                 <td style={{ padding: 14 }}>
                   <button onClick={() => openModal(user)} style={{ marginRight: 8, background: 'linear-gradient(90deg, #6e8fbf, #b85c8b)', color: 'white', border: 'none', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 16, transition: 'background 0.2s' }} title="Edit User"><FaEdit /></button>
-                  <button onClick={() => handleDelete(user.id)} style={{ background: 'linear-gradient(90deg, #c94f7c, #d47fa6)', color: 'white', border: 'none', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 16, transition: 'background 0.2s' }} title="Delete User"><FaTrash /></button>
+                  <button onClick={() => handleDelete(user._id)} style={{ background: 'linear-gradient(90deg, #c94f7c, #d47fa6)', color: 'white', border: 'none', borderRadius: 8, padding: '7px 14px', cursor: 'pointer', fontSize: 16, transition: 'background 0.2s' }} title="Delete User"><FaTrash /></button>
                 </td>
               </tr>
             ))}
@@ -454,20 +488,29 @@ function OrdersSection() {
 }
 
 function IncomeSection() {
-  // Example summary data (replace with real data as needed)
-  const summary = {
-    totalIncome: 12500,
-    totalOrders: 320,
-    totalUsers: 150,
-  };
-  // Example recent transactions (replace with real data as needed)
-  const transactions = [
-    { id: 1, user: 'Alice', amount: 120, date: '2024-06-01', status: 'Completed' },
-    { id: 2, user: 'Bob', amount: 75, date: '2024-06-01', status: 'Completed' },
-    { id: 3, user: 'Charlie', amount: 200, date: '2024-05-31', status: 'Refunded' },
-    { id: 4, user: 'Diana', amount: 50, date: '2024-05-30', status: 'Completed' },
-    { id: 5, user: 'Eve', amount: 300, date: '2024-05-29', status: 'Completed' },
-  ];
+  const { user } = useAuth();
+  const [orders, setOrders] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!user || !user.token) return;
+    fetch('/api/v1/orders/admin/all', {
+      headers: {
+        'Authorization': `Bearer ${user.token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setOrders(data.data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [user]);
+
+  // Calculate summary
+  const totalIncome = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  const totalOrders = orders.length;
+  // You may want to fetch users for totalUsers, or pass as prop
 
   return (
     <div style={{ width: '100%', background: 'rgba(255,255,255,0.7)', borderRadius: 22, boxShadow: '0 8px 32px #fbeaec33', padding: 40, minHeight: 500, display: 'flex', flexDirection: 'column', gap: 32, alignItems: 'flex-start', position: 'relative' }}>
@@ -476,16 +519,13 @@ function IncomeSection() {
       <div style={{ display: 'flex', gap: 32, width: '100%', marginBottom: 16 }}>
         <div style={{ flex: 1, background: 'linear-gradient(90deg, #fbeaec 60%, #f7e1f3 100%)', borderRadius: 18, boxShadow: '0 2px 8px #fbeaec', padding: 28, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div style={{ color: '#d47fa6', fontWeight: 700, fontSize: 18 }}>Total Income</div>
-          <div style={{ color: '#b85c8b', fontWeight: 900, fontSize: 32, marginTop: 8 }}>${summary.totalIncome.toLocaleString()}</div>
+          <div style={{ color: '#b85c8b', fontWeight: 900, fontSize: 32, marginTop: 8 }}>NRS {totalIncome.toLocaleString()}</div>
         </div>
         <div style={{ flex: 1, background: 'linear-gradient(90deg, #fbeaec 60%, #f7e1f3 100%)', borderRadius: 18, boxShadow: '0 2px 8px #fbeaec', padding: 28, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div style={{ color: '#d47fa6', fontWeight: 700, fontSize: 18 }}>Total Orders</div>
-          <div style={{ color: '#b85c8b', fontWeight: 900, fontSize: 32, marginTop: 8 }}>{summary.totalOrders}</div>
+          <div style={{ color: '#b85c8b', fontWeight: 900, fontSize: 32, marginTop: 8 }}>{totalOrders}</div>
         </div>
-        <div style={{ flex: 1, background: 'linear-gradient(90deg, #fbeaec 60%, #f7e1f3 100%)', borderRadius: 18, boxShadow: '0 2px 8px #fbeaec', padding: 28, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <div style={{ color: '#d47fa6', fontWeight: 700, fontSize: 18 }}>Total Users</div>
-          <div style={{ color: '#b85c8b', fontWeight: 900, fontSize: 32, marginTop: 8 }}>{summary.totalUsers}</div>
-        </div>
+        {/* You can add total users here if needed */}
       </div>
       {/* Income Chart Placeholder */}
       <div style={{ width: '100%', background: '#fff', borderRadius: 18, boxShadow: '0 2px 8px #fbeaec', padding: 32, marginBottom: 16, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -497,6 +537,7 @@ function IncomeSection() {
       {/* Recent Transactions Table */}
       <div style={{ width: '100%', background: '#fff', borderRadius: 18, boxShadow: '0 2px 8px #fbeaec', padding: 24 }}>
         <div style={{ color: '#b85c8b', fontWeight: 700, fontSize: 20, marginBottom: 12 }}>Recent Transactions</div>
+        {loading ? <div>Loading...</div> : (
         <table style={{ width: '100%', borderRadius: 12, color: '#b85c8b', fontWeight: 600, fontSize: 16, borderCollapse: 'separate', borderSpacing: 0, overflow: 'hidden' }}>
           <thead>
             <tr style={{ background: 'linear-gradient(90deg, #fbeaec 60%, #f7e1f3 100%)' }}>
@@ -508,17 +549,18 @@ function IncomeSection() {
             </tr>
           </thead>
           <tbody>
-            {transactions.map(tx => (
-              <tr key={tx.id} style={{ background: '#fff', transition: 'background 0.18s' }} onMouseOver={e => e.currentTarget.style.background = '#fbeaec44'} onMouseOut={e => e.currentTarget.style.background = '#fff'}>
-                <td style={{ padding: 10 }}>{tx.id}</td>
-                <td style={{ padding: 10 }}>{tx.user}</td>
-                <td style={{ padding: 10 }}>${tx.amount}</td>
-                <td style={{ padding: 10 }}>{tx.date}</td>
-                <td style={{ padding: 10, color: tx.status === 'Completed' ? '#4caf50' : '#c94f7c', fontWeight: 700 }}>{tx.status}</td>
+            {orders.map((order, idx) => (
+              <tr key={order._id} style={{ background: '#fff', transition: 'background 0.18s' }} onMouseOver={e => e.currentTarget.style.background = '#fbeaec44'} onMouseOut={e => e.currentTarget.style.background = '#fff'}>
+                <td style={{ padding: 10 }}>{idx + 1}</td>
+                <td style={{ padding: 10 }}>{order.customer ? `${order.customer.fname || ''} ${order.customer.lname || ''}` : 'N/A'}</td>
+                <td style={{ padding: 10 }}>NRS {order.totalAmount}</td>
+                <td style={{ padding: 10 }}>{order.createdAt ? order.createdAt.slice(0, 10) : ''}</td>
+                <td style={{ padding: 10, color: order.orderStatus === 'confirmed' ? '#4caf50' : '#c94f7c', fontWeight: 700 }}>{order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}</td>
               </tr>
             ))}
           </tbody>
         </table>
+        )}
       </div>
     </div>
   );

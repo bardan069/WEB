@@ -8,6 +8,7 @@ const SignupPage = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const result = await signup({ firstName, lastName, email, password });
+    const result = await signup({ firstName, lastName, email, password, phone });
     if (result.success) {
       navigate('/login');
     }
@@ -60,19 +61,23 @@ const SignupPage = () => {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
           <div style={{ position: 'relative' }}>
             <FaUser style={{ position: 'absolute', left: 12, top: 13, color: '#c94f7c' }} />
-            <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} required placeholder="First Name" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(2px)' }} />
+            <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} required placeholder="First Name" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: '#fff', color: '#000', backdropFilter: 'blur(2px)' }} />
           </div>
           <div style={{ position: 'relative' }}>
             <FaUser style={{ position: 'absolute', left: 12, top: 13, color: '#c94f7c' }} />
-            <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} required placeholder="Last Name" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(2px)' }} />
+            <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} required placeholder="Last Name" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: '#fff', color: '#000', backdropFilter: 'blur(2px)' }} />
           </div>
           <div style={{ position: 'relative' }}>
             <FaEnvelope style={{ position: 'absolute', left: 12, top: 13, color: '#c94f7c' }} />
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="Email" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(2px)' }} />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="Email" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: '#fff', color: '#000', backdropFilter: 'blur(2px)' }} />
+          </div>
+          <div style={{ position: 'relative' }}>
+            <FaUser style={{ position: 'absolute', left: 12, top: 13, color: '#c94f7c' }} />
+            <input type="text" value={phone} onChange={e => setPhone(e.target.value)} required placeholder="Phone Number" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: '#fff', color: '#000', backdropFilter: 'blur(2px)' }} />
           </div>
           <div style={{ position: 'relative' }}>
             <FaLock style={{ position: 'absolute', left: 12, top: 13, color: '#c94f7c' }} />
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Password" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(2px)' }} />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Password" style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: 8, border: '1.5px solid #e9b6d0', fontSize: 16, background: '#fff', color: '#000', backdropFilter: 'blur(2px)' }} />
           </div>
           <button type="submit" style={{ width: '100%', background: 'linear-gradient(90deg, #c94f7c 0%, #b85c8b 100%)', color: 'white', border: 'none', borderRadius: 10, padding: '14px 0', fontWeight: 700, fontSize: 18, boxShadow: '0 2px 8px #fbeaec', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 6, transition: 'background 0.2s' }} disabled={loading}>
             {loading ? 'Signing up...' : <><FaUserPlus style={{ fontSize: 20 }} /> Sign Up</>}
